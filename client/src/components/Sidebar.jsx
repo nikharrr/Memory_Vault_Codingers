@@ -19,7 +19,7 @@ function Sidebar({ onNavigate }) {
   };
 
   if (!isLoggedIn) {
-    // If user is not logged in, don't render anything
+    // If the user is not logged in, return null (no sidebar or button visible)
     return null;
   }
 
@@ -27,7 +27,7 @@ function Sidebar({ onNavigate }) {
     <>
       {/* Button to toggle sidebar - increased z-index to be above navbar */}
       <button
-        className="text-white text-3xl bg-white/10 rounded-lg p-2 hover:bg-white/20 fixed top-4 left-4 z-30" 
+        className="text-white text-3xl bg-white/10 rounded-lg p-2 hover:bg-white/20 fixed top-4 left-4 z-30"
         onClick={() => setOpen(!open)}
       >
         {open ? '×' : '☰'}
