@@ -9,17 +9,16 @@ function Navbar({ onNavigate }) {
     const user = localStorage.getItem('user');
     if (user) {
       const userData = JSON.parse(user);
+      console.log('UserData from localStorage:', userData); // Debug line (optional)
       setIsLoggedIn(true);
-      setUserName(userData.name);
+      setUserName(userData.full_name); // ✅ using full_name instead of name
     }
   }, []);
 
   const handleAuth = () => {
     if (isLoggedIn) {
-      // Navigate to profile page
       onNavigate('profile');
     } else {
-      // Navigate to login page
       onNavigate('login');
     }
   };
@@ -39,7 +38,7 @@ function Navbar({ onNavigate }) {
       >
         Home
       </button>
-      
+
       {isLoggedIn ? (
         <div className="relative group">
           <button
@@ -49,23 +48,23 @@ function Navbar({ onNavigate }) {
             <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
             {userName}
           </button>
-          
+
           <div className="absolute right-0 mt-1 w-48 rounded-md shadow-lg bg-[#0d1321] border border-white/20 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
             <div className="py-1">
-              <button 
-                onClick={() => onNavigate('profile')} 
+              <button
+                onClick={() => onNavigate('profile')}
                 className="block w-full text-left px-4 py-2 text-white hover:bg-white/10"
               >
                 View Profile
               </button>
-              <button 
-                onClick={() => onNavigate('settings')} 
+              <button
+                onClick={() => onNavigate('settings')}
                 className="block w-full text-left px-4 py-2 text-white hover:bg-white/10"
               >
                 Settings
               </button>
-              <button 
-                onClick={handleLogout} 
+              <button
+                onClick={handleLogout}
                 className="block w-full text-left px-4 py-2 text-white hover:bg-white/10"
               >
                 Logout

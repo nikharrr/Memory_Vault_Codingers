@@ -10,7 +10,7 @@ function Dashboard() {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       const user = JSON.parse(storedUser);
-      setUserName(user.name);
+      setUserName(user.full_name);
     }
 
     // Dummy data for recent memories
