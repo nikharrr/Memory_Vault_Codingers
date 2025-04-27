@@ -12,7 +12,7 @@ const patientsRouter = require('./routes/patients');
 app.use(cors());
 app.use(bodyParser.json());
 
-app.use('/patients/:patient_id/memories', memoriesRouter);
+app.use('/patients', memoriesRouter); 
 app.use('/patients', patientsRouter);
 
 app.get('/', (req, res) => {

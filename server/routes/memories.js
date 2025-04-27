@@ -13,18 +13,71 @@ router.get('/',async (req,res) => {
 });
 
 // Create a memory
-router.post('/',async (req,res) => {
-  const {patient_id,title,descrip,memory_date } = req.body;
+// Create memory + tags + people
+router.post('/:patient_id/memories', async (req, res) => {
+  const { patient_id } = req.params;
+  const { title, descrip, memory_date, tags, people_involved } = req.body;
+
+  if (!title || !descrip || !memory_date || !tags || !people_involved) {
+    return res.status(400).json({ error: 'All fields (title, description, memory_date, tags, people_involved) are required' });
+  }
+
+  const client = await db.connect(); // Transaction start
   try {
-    const result = await db.query(
-      'INSERT INTO memories (patient_id, title, descrip, memory_date) VALUES ($1, $2, $3, $4) RETURNING *',
-      [patient_id,title,descrip,memory_date]
+    // Check if patient exists
+    const patientCheck = await client.query('SELECT patient_id FROM patients WHERE patient_id = $1', [patient_id]);
+    if (patientCheck.rows.length === 0) {
+      return res.status(404).json({ error: 'Patient not found' });
+    }
+
+    await client.query('BEGIN');
+
+    // Step 1: Insert Memory
+    const memoryResult = await client.query(
+      `INSERT INTO memories (patient_id, title, descrip, memory_date) 
+       VALUES ($1, $2, $3, $4) RETURNING memory_id`,
+      [patient_id, title, descrip, memory_date]
     );
-    res.status(201).json(result.rows[0]);
+    const memoryId = memoryResult.rows[0].memory_id;
+
+    // Step 2: Insert Tags with patient_id
+    for (const tagName of tags) {
+      let tag = await client.query(`SELECT tag_id FROM tags WHERE name = $1 AND patient_id = $2`, [tagName, patient_id]);
+      if (tag.rows.length === 0) {
+        tag = await client.query(
+          `INSERT INTO tags (name, patient_id) VALUES ($1, $2) RETURNING tag_id`, 
+          [tagName, patient_id]
+        );
+      }
+      await client.query(`INSERT INTO memorytags (memory_id, tag_id) VALUES ($1, $2)`, [memoryId, tag.rows[0].tag_id]);
+    }
+
+    // Step 3: Insert People with patient_id
+    for (const personName of people_involved) {
+      let person = await client.query(`SELECT person_id FROM people WHERE name = $1 AND patient_id = $2`, [personName, patient_id]);
+      if (person.rows.length === 0) {
+        person = await client.query(
+          `INSERT INTO people (name, patient_id) VALUES ($1, $2) RETURNING person_id`, 
+          [personName, patient_id]
+        );
+      }
+      await client.query(`INSERT INTO memorypeople (memory_id, person_id) VALUES ($1, $2)`, [memoryId, person.rows[0].person_id]);
+    }
+
+    await client.query('COMMIT');
+
+    res.status(201).json({ success: true, memory_id: memoryId });
+
   } catch (err) {
+    await client.query('ROLLBACK');
+    console.error(err);
     res.status(500).json({ error: err.message });
+  } finally {
+    client.release();
   }
 });
+
+
 
 // Get memory by patient_id
 router.get('/patient/:id',async (req,res) => {
