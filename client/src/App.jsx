@@ -6,7 +6,7 @@ import TransitionAnimation from './components/TransitionAnimation';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import ViewMemories from './pages/ViewMemories';
-import ViewMemoryFromForm from './pages/ViewMemoryFromForm';
+// import ViewMemoryFromForm from './pages/ViewMemoryFromForm';
 import AddMemory from './pages/AddMemory';
 import MemoryDetail from './pages/MemoryDetail';
 import ForgottenMemories from './pages/ForgottenMemories';
@@ -93,27 +93,28 @@ function App() {
 
   return (
     <div className={`relative w-screen min-h-screen ${isDarkMode ? 'bg-[#050A1F] text-white' : 'bg-[#f0f5ff] text-gray-800'} font-sans overflow-hidden`}>
-      <Fireflies />
-      
-      <div className="absolute top-0 left-0 w-full flex justify-between items-center p-4 z-20">
-        <Sidebar onNavigate={handlePageChange} />
-        <Navbar onNavigate={handlePageChange} onGoBack={handleGoBack} />
-      </div>
+    <Fireflies />
     
-      {showStars && <TransitionAnimation />}
-    
-      <div className="flex flex-col items-center justify-center w-full min-h-screen px-6 pt-20 relative z-10">
-        {currentPage === 'home' && <Home />}
-        {currentPage === 'dashboard' && <Dashboard />}
-        {currentPage === 'viewMemories' && <ViewMemories />}
-        {currentPage === 'viewMemoryFromForm' && <ViewMemoryFromForm />}
-        {currentPage === 'addMemory' && <AddMemory />}
-        {currentPage === 'memoryDetail' && <MemoryDetail />}
-        {currentPage === 'forgottenMemories' && <ForgottenMemories />}
-        {currentPage === 'settings' && <Settings updateTheme={updateTheme} />}
-        {currentPage === 'login' && <Login onNavigate={handlePageChange} />}
-        {currentPage === 'profile' && <Profile />}
-      </div>
+    <div className="absolute top-0 left-0 w-full flex justify-between items-center p-4 z-20">
+      <Sidebar onNavigate={handlePageChange} />
+      <Navbar onNavigate={handlePageChange} />
+    </div>
+  
+    {showStars && <TransitionAnimation />}
+  
+    <div className="flex flex-col items-center justify-center w-full min-h-screen px-6 pt-20 relative z-10">
+      {currentPage === 'home' && <Home />}
+      {currentPage === 'dashboard' && <Dashboard />}
+      {currentPage === 'viewMemories' && <ViewMemories />}
+      {currentPage === 'viewMemoryFromForm' && <ViewMemoryFromForm />}
+      {currentPage === 'addMemory' && <AddMemory />}
+      {currentPage === 'memoryDetail' && <MemoryDetail />}
+      {currentPage === 'forgottenMemories' && <ForgottenMemories />}
+      {currentPage === 'settings' && <Settings updateTheme={updateTheme} />}
+      {currentPage === 'login' && <Login onNavigate={handlePageChange} />}
+      {currentPage === 'profile' && <Profile />}
+      {/* Page Not Found fallback */}
+    </div>
     </div>
   );
 }

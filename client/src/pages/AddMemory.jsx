@@ -10,9 +10,11 @@ function AddMemory(){
   const [popupMessage, setPopupMessage] = useState('');
   const [popupType, setPopupType] = useState('');
 
+
   const user = JSON.parse(localStorage.getItem('user'));
   const patient_id= user ? user.patient_id : null;
   console.log(patient_id)
+
   const handleFileChange = (event) => {
     const selectedFiles = Array.from(event.target.files);
     setImages((prevImages) => [...prevImages, ...selectedFiles]);
@@ -53,6 +55,7 @@ function AddMemory(){
 
     try {
       // 🔥 Send memory to backend API
+
       await axios.post(`http://localhost:5000/patients/${patient_id}/memories`, newMemory);
 
       // ✅ If successful
@@ -68,6 +71,7 @@ function AddMemory(){
       console.error('Error saving memory to backend:', error);
 
       // ⚠ Fallback: Optional - Save to localStorage if server fails
+
       let memories = JSON.parse(localStorage.getItem('memories')) || [];
       memories.push(newMemory);
       localStorage.setItem('memories', JSON.stringify(memories));
@@ -144,6 +148,8 @@ function AddMemory(){
         <div className="bg-white/20 backdrop-blur-md border border-white/40 p-6 rounded-xl w-full md:w-1/2">
           <h2 className="text-2xl font-bold text-yellow-300 mb-4">Memory Details</h2>
 
+
+
           <label htmlFor="title" className="block text-lg font-semibold text-gray-300 mb-2">
             Title:
           </label>
@@ -168,6 +174,7 @@ function AddMemory(){
             required
           ></textarea>
 
+
           <label htmlFor="tags" className="block text-lg font-semibold text-gray-300 mb-2">
             Tags (comma separated):
           </label>
@@ -189,7 +196,6 @@ function AddMemory(){
             onChange={handlePeopleInvolvedChange}
             className="w-full p-3 border border-yellow-500 rounded-lg bg-transparent text-gray-300 mb-4 focus:ring-2 focus:ring-yellow-300"
           />
-
           <button
             type="submit"
             onClick={handleSubmit}
