@@ -6,7 +6,7 @@ import TransitionAnimation from './components/TransitionAnimation';
 import Home from './pages/Home';
 import Dashboard from './pages/Dashboard';
 import ViewMemories from './pages/ViewMemories';
-import ViewMemoryFromForm from './pages/ViewMemoryFromForm';
+// import ViewMemoryFromForm from './pages/ViewMemoryFromForm';
 import AddMemory from './pages/AddMemory';
 import MemoryDetail from './pages/MemoryDetail';
 import ForgottenMemories from './pages/ForgottenMemories';
@@ -62,7 +62,7 @@ function App() {
       {currentPage === 'home' && <Home />}
       {currentPage === 'dashboard' && <Dashboard />}
       {currentPage === 'viewMemories' && <ViewMemories />}
-      {currentPage === 'viewMemoryFromForm' && <ViewMemoryFromForm />}
+      {/* {currentPage === 'viewMemoryFromForm' && <ViewMemoryFromForm />} */}
       {currentPage === 'addMemory' && <AddMemory />}
       {currentPage === 'memoryDetail' && <MemoryDetail />}
       {currentPage === 'forgottenMemories' && <ForgottenMemories />}
