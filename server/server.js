@@ -12,8 +12,8 @@ const patientsRouter = require('./routes/patients');
 app.use(cors());
 app.use(bodyParser.json());
 
-app.use('/api/memories', memoriesRouter);
-app.use('/api/patients', patientsRouter);
+app.use('/patients/:patient_id/memories', memoriesRouter);
+app.use('/patients', patientsRouter);
 
 app.get('/', (req, res) => {
   res.send('Memory Archive Backend Running');

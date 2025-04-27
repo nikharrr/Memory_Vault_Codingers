@@ -1,12 +1,27 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 function Sidebar({ onNavigate }) {
   const [open, setOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    if (user) {
+      setIsLoggedIn(true);
+    } else {
+      setIsLoggedIn(false);
+    }
+  }, []);
 
   const handleClick = (page) => {
     onNavigate(page);
     setOpen(false);
   };
+
+  if (!isLoggedIn) {
+    // If user is not logged in, don't render anything
+    return null;
+  }
 
   return (
     <>

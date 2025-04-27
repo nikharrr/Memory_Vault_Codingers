@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import axios from 'axios'; // ✅ Axios imported
 
 function Login({ onNavigate }) {
   const [activeTab, setActiveTab] = useState('login');
@@ -18,45 +19,45 @@ function Login({ onNavigate }) {
     });
   };
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
-    // Simple validation
     if (!formData.email || !formData.password) {
       setError('Please fill in all fields');
       setLoading(false);
       return;
     }
 
-    // Simulate API call delay
-    setTimeout(() => {
-      // Demo login - in a real app, you'd verify with a backend
-      const user = {
-        name: formData.email.split('@')[0],
+    try {
+      const response = await axios.post('http://localhost:5000/patients/login', {
         email: formData.email,
-        id: Date.now()
-      };
+        password: formData.password,
+      });
 
-      // Save to localStorage
+      const user = response.data.user;
       localStorage.setItem('user', JSON.stringify(user));
-      
-      // Redirect to dashboard
-      setLoading(false);
+
       onNavigate('dashboard');
-      
-      // Force page reload to update navbar state
       window.location.reload();
-    }, 1000);
+    } catch (error) {
+      console.error(error);
+      if (error.response && error.response.data && error.response.data.message) {
+        setError(error.response.data.message);
+      } else {
+        setError('Login failed');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleSignup = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
-    // Simple validation
     if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
       setError('Please fill in all fields');
       setLoading(false);
@@ -69,25 +70,29 @@ function Login({ onNavigate }) {
       return;
     }
 
-    // Simulate API call delay
-    setTimeout(() => {
-      // Demo signup - in a real app, you'd register with a backend
-      const user = {
-        name: formData.name,
+    try {
+      const response = await axios.post('http://localhost:5000/patients/signup', {
+        full_name: formData.name,
         email: formData.email,
-        id: Date.now()
-      };
+        password: formData.password,
+        birth_date: '2000-01-01', // 👈 placeholder, since no field in form
+      });
 
-      // Save to localStorage
+      const user = response.data.patient;
       localStorage.setItem('user', JSON.stringify(user));
-      
-      // Redirect to dashboard
-      setLoading(false);
+
       onNavigate('dashboard');
-      
-      // Force page reload to update navbar state
       window.location.reload();
-    }, 1000);
+    } catch (error) {
+      console.error(error);
+      if (error.response && error.response.data && error.response.data.message) {
+        setError(error.response.data.message);
+      } else {
+        setError('Signup failed');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

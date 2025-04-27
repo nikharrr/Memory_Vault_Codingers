@@ -10,17 +10,16 @@ function Navbar({ onNavigate }) {
     const user = localStorage.getItem('user');
     if (user) {
       const userData = JSON.parse(user);
+      console.log('UserData from localStorage:', userData); // Debug line (optional)
       setIsLoggedIn(true);
-      setUserName(userData.name);
+      setUserName(userData.full_name); // ✅ using full_name instead of name
     }
   }, []);
 
   const handleAuth = () => {
     if (isLoggedIn) {
-      // Navigate to profile page
       onNavigate('profile');
     } else {
-      // Navigate to login page
       onNavigate('login');
     }
   };

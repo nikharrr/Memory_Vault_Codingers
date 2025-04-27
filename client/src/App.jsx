@@ -19,27 +19,71 @@ function App() {
   const [currentPage, setCurrentPage] = useState('home');
   const [showStars, setShowStars] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
+  const [pageHistory, setPageHistory] = useState(['home']);
 
+  // Initialize from localStorage and setup history
   useEffect(() => {
     const savedSettings = localStorage.getItem('memorySettings');
     if (savedSettings) {
       const settings = JSON.parse(savedSettings);
       setIsDarkMode(settings.isDarkMode);
     }
+
+    // Initialize browser history
+    window.history.replaceState({ page: 'home' }, '', window.location.pathname);
+    
+    // Set up popstate listener
+    window.addEventListener('popstate', handlePopState);
+    
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
   }, []);
 
+  // Handle theme change
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
   }, [isDarkMode]);
 
+  // Handle browser back/forward navigation
+  const handlePopState = (event) => {
+    if (event.state?.page) {
+      setShowStars(true);
+      setTimeout(() => {
+        setCurrentPage(event.state.page);
+        setShowStars(false);
+      }, 800);
+    }
+  };
+
+  // Main navigation function
   const handlePageChange = (page) => {
     setShowStars(true);
     setTimeout(() => {
+      // Special handling for home page
+      if (page === 'home') {
+        setPageHistory(['home']); // Reset history array
+        window.history.replaceState({ page: 'home' }, '', window.location.pathname);
+      } else {
+        setPageHistory(prev => [...prev, page]);
+        window.history.pushState({ page }, '', `#${page}`);
+      }
+      
       setCurrentPage(page);
       setShowStars(false);
     }, 800);
   };
 
+
+
+  // Go back function for Navbar
+  const handleGoBack = () => {
+    if (pageHistory.length > 1) {
+      window.history.back();
+    }
+  };
+
+  // Theme update function
   const updateTheme = (isDark) => {
     setIsDarkMode(isDark);
     const settings = JSON.parse(localStorage.getItem('memorySettings')) || {};
@@ -71,8 +115,6 @@ function App() {
       {currentPage === 'profile' && <Profile />}
       {/* Page Not Found fallback */}
     </div>
-  </div>
-  
   );
 }
 
