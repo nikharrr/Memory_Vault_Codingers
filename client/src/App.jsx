@@ -106,7 +106,7 @@ function App() {
       {currentPage === 'home' && <Home />}
       {currentPage === 'dashboard' && <Dashboard />}
       {currentPage === 'viewMemories' && <ViewMemories />}
-      {/* {currentPage === 'viewMemoryFromForm' && <ViewMemoryFromForm />} */}
+      {currentPage === 'viewMemoryFromForm' && <ViewMemoryFromForm />}
       {currentPage === 'addMemory' && <AddMemory />}
       {currentPage === 'memoryDetail' && <MemoryDetail />}
       {currentPage === 'forgottenMemories' && <ForgottenMemories />}
@@ -114,6 +114,7 @@ function App() {
       {currentPage === 'login' && <Login onNavigate={handlePageChange} />}
       {currentPage === 'profile' && <Profile />}
       {/* Page Not Found fallback */}
+    </div>
     </div>
   );
 }
