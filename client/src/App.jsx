@@ -18,6 +18,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState('home');
   const [showStars, setShowStars] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(true);
+  const [userName, setUserName] = useState('');
 
   useEffect(() => {
     const savedSettings = localStorage.getItem('memorySettings');
@@ -25,6 +26,27 @@ function App() {
       const settings = JSON.parse(savedSettings);
       setIsDarkMode(settings.isDarkMode);
     }
+
+    const user = localStorage.getItem('user');
+    if (user) {
+      const userData = JSON.parse(user);
+      setUserName(userData.full_name);
+    }
+
+    // Handle browser back/forward button
+    const handlePopState = () => {
+      const pageFromHash = window.location.hash.replace('#', '') || 'home';
+      setCurrentPage(pageFromHash);
+    };
+
+    window.addEventListener('popstate', handlePopState);
+
+    // Set initial page from URL if available
+    handlePopState();
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
   }, []);
 
   useEffect(() => {
@@ -36,6 +58,7 @@ function App() {
     setTimeout(() => {
       setCurrentPage(page);
       setShowStars(false);
+      window.history.pushState({ page }, '', `#${page}`);
     }, 800);
   };
 
@@ -46,27 +69,30 @@ function App() {
     localStorage.setItem('memorySettings', JSON.stringify(settings));
   };
 
+  // Fallback to 'home' if currentPage somehow is blank
+  const pageToRender = currentPage || 'home';
+
   return (
     <div className={`relative w-screen min-h-screen ${isDarkMode ? 'bg-[#050A1F] text-white' : 'bg-[#f0f5ff] text-gray-800'} font-sans overflow-hidden`}>
       <Fireflies />
-      
+
       <div className="absolute top-0 left-0 w-full flex justify-between items-center p-4 z-20">
         <Sidebar onNavigate={handlePageChange} />
-        <Navbar onNavigate={handlePageChange} currentPage={currentPage} />
+        <Navbar onNavigate={handlePageChange} currentPage={pageToRender} userName={userName} />
       </div>
 
       {showStars && <TransitionAnimation />}
 
       <div className="flex flex-col items-center justify-center w-full min-h-screen px-6 pt-20 relative z-10">
-        {currentPage === 'home' && <Home />}
-        {currentPage === 'dashboard' && <Dashboard />}
-        {currentPage === 'viewMemories' && <ViewMemories />}
-        {currentPage === 'addMemory' && <AddMemory />}
-        {currentPage === 'memoryDetail' && <MemoryDetail />}
-        {currentPage === 'forgottenMemories' && <ForgottenMemories />}
-        {currentPage === 'settings' && <Settings updateTheme={updateTheme} />}
-        {currentPage === 'login' && <Login onNavigate={handlePageChange} />}
-        {currentPage === 'profile' && <Profile />}
+        {pageToRender === 'home' && <Home />}
+        {pageToRender === 'dashboard' && <Dashboard />}
+        {pageToRender === 'viewMemories' && <ViewMemories />}
+        {pageToRender === 'addMemory' && <AddMemory />}
+        {pageToRender === 'memoryDetail' && <MemoryDetail />}
+        {pageToRender === 'forgottenMemories' && <ForgottenMemories />}
+        {pageToRender === 'settings' && <Settings updateTheme={updateTheme} />}
+        {pageToRender === 'login' && <Login onNavigate={handlePageChange} />}
+        {pageToRender === 'profile' && <Profile />}
       </div>
     </div>
   );
