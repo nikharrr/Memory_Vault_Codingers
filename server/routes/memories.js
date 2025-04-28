@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('../db');
 
 // Get all memories
-router.get('/',async (req,res) => {
+router.get('/', async (req, res) => {
   try {
     const result = await db.query('SELECT * FROM memories ORDER BY memory_date DESC');
     res.json(result.rows);
@@ -14,10 +14,10 @@ router.get('/',async (req,res) => {
 
 // Create a memory
 // Create memory + tags + people
-router.post('/:patient_id/memories', async (req, res) => {
+router.post('/:patient_id/create', async (req, res) => {
   const { patient_id } = req.params;
   const { title, descrip, memory_date, tags, people_involved } = req.body;
-
+  console.log(patient_id);
   if (!title || !descrip || !memory_date || !tags || !people_involved) {
     return res.status(400).json({ error: 'All fields (title, description, memory_date, tags, people_involved) are required' });
   }
@@ -77,17 +77,64 @@ router.post('/:patient_id/memories', async (req, res) => {
   }
 });
 
+router.get('/:patient_id/search', async (req, res) => {
+  const { patient_id } = req.params;
+  // Accept comma-separated values for multiple tags/people
+  const { tags, people } = req.query;
 
-
-// Get memory by patient_id
-router.get('/patient/:id',async (req,res) => {
-  const { id } = req.params;
   try {
-    const result = await db.query('SELECT * FROM Memories WHERE patient_id = $1',[id]);
+    // Base query
+    let query = `
+      SELECT DISTINCT m.memory_id, m.title, m.descrip, m.memory_date
+      FROM memories m
+      WHERE m.patient_id = $1
+    `;
+    const params = [patient_id];
+    let paramIndex = 2;
+
+    // Process tags if provided
+    if (tags && !people) {
+      const tagArray = tags.split(',').map(tag => tag.trim());
+      query += `
+        AND EXISTS (
+          SELECT 1 FROM memorytags mt
+          JOIN tags t ON mt.tag_id = t.tag_id
+          WHERE mt.memory_id = m.memory_id
+          AND t.name = ANY($${paramIndex})
+        )
+      `;
+      params.push(tagArray);
+      paramIndex++;
+    }
+    // Process people if provided
+    else if (people && !tags) {
+      const peopleArray = people.split(',').map(p => p.trim());
+      query += `
+        AND EXISTS (
+          SELECT 1 FROM memorypeople mp
+          JOIN people p ON mp.person_id = p.person_id
+          WHERE mp.memory_id = m.memory_id
+          AND p.name = ANY($${paramIndex})
+        )
+      `;
+      params.push(peopleArray);
+    }
+    // Error if both provided
+    else if (tags && people) {
+      return res.status(400).json({ 
+        error: "Please filter by either tags OR people, not both" 
+      });
+    }
+
+    query += ` ORDER BY m.memory_date DESC`;
+
+    const result = await db.query(query, params);
     res.json(result.rows);
+
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 module.exports = router;
