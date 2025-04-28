@@ -1,20 +1,37 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { ChevronDownIcon, MagnifyingGlassIcon, XMarkIcon } from '@heroicons/react/24/solid';
 
 function Navbar({ onNavigate, currentPage }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchCategory, setSearchCategory] = useState('');
+  const [selectedOption, setSelectedOption] = useState('');
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isSubDropdownOpen, setIsSubDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
-    // Check if user is logged in from localStorage
     const user = localStorage.getItem('user');
     if (user) {
       const userData = JSON.parse(user);
       setIsLoggedIn(true);
-      setUserName(userData.full_name); // Use full_name instead of name
+      setUserName(userData.full_name);
     } else {
-      setIsLoggedIn(false); // No user, logged out state
+      setIsLoggedIn(false);
     }
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+        setIsSubDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, []);
 
   const handleAuth = () => {
@@ -32,37 +49,95 @@ function Navbar({ onNavigate, currentPage }) {
     onNavigate('home');
   };
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (searchQuery) {
-      onNavigate('search', searchQuery);
-    }
+  const handleCategorySelect = (category) => {
+    setSearchCategory(category);
+    setSelectedOption('');
+    setIsDropdownOpen(false);
+    setIsSubDropdownOpen(true);
   };
 
+  const handleOptionSelect = (option) => {
+    setSelectedOption(option);
+    setIsSubDropdownOpen(false);
+  };
+
+  const handleResetSearch = () => {
+    setSearchCategory('');
+    setSelectedOption('');
+    setIsDropdownOpen(false);
+    setIsSubDropdownOpen(false);
+  };
+
+  const tagsOptions = ['Nature', 'Family', 'Travel', 'Pets'];
+  const peopleOptions = ['Alice', 'Bob', 'Charlie', 'Diana'];
+
   return (
-    <div className="fixed top-4 left-0 right-0 flex items-center z-20 px-6">
-      {/* Centered Search Bar only on Home Page */}
-      {currentPage === 'home' && (
-        <div className="flex justify-center w-full mx-8">
-          <form onSubmit={handleSearch} className="flex items-center gap-2 w-full max-w-lg mx-auto">
-            <input
-              type="text"
-              placeholder="Search..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 px-4 py-2 rounded-lg bg-white/30 border border-yellow-300 placeholder-gray-300 text-white focus:outline-none focus:ring-2 focus:ring-yellow-300 backdrop-blur-md"
-            />
-            <button
-              type="submit"
-              className="px-5 py-2 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-lg transition-all duration-300"
+    <div className="fixed top-4 left-0 right-0 flex justify-between items-center z-20 px-6">
+      {/* Search Box */}
+      {currentPage === 'home' && isLoggedIn && (
+        <div className="flex justify-center w-full">
+          <div ref={dropdownRef} className="relative w-full max-w-lg">
+            {/* Search Bar */}
+            <div
+              className="flex items-center w-full px-4 py-2 bg-white/30 border backdrop-blur-md rounded-lg cursor-pointer"
+              onClick={() => {
+                if (!selectedOption) {
+                  setIsDropdownOpen(!isDropdownOpen);
+                }
+              }}
+              style={{ marginLeft: '10%' }} // Shift the search bar a bit to the right
             >
-              Search
-            </button>
-          </form>
+              <MagnifyingGlassIcon className="w-5 h-5 text-white mr-2" />
+              <span className="text-white flex-1 truncate">
+                {selectedOption || (searchCategory ? `Select a ${searchCategory.toLowerCase()}...` : 'Search by...')}
+              </span>
+
+              {(searchCategory || selectedOption) ? (
+                <button onClick={handleResetSearch}>
+                  <XMarkIcon className="w-5 h-5 text-white hover:text-yellow-300" />
+                </button>
+              ) : (
+                <ChevronDownIcon className="w-5 h-5 text-white ml-2" />
+              )}
+            </div>
+
+            {/* Main Dropdown */}
+            {isDropdownOpen && (
+              <div className="absolute top-full left-0 w-full mt-2 bg-white/30 backdrop-blur-md z-10 border border-white/30 rounded-none">
+                <button
+                  onClick={() => handleCategorySelect('Tags')}
+                  className="block w-full text-left px-4 py-2 text-white hover:bg-white/20"
+                >
+                  Search by Tags
+                </button>
+                <button
+                  onClick={() => handleCategorySelect('People')}
+                  className="block w-full text-left px-4 py-2 text-white hover:bg-white/20"
+                >
+                  Search by People
+                </button>
+              </div>
+            )}
+
+            {/* Sub Dropdown */}
+            {isSubDropdownOpen && searchCategory && (
+              <div className="absolute top-full left-0 w-full mt-2 bg-white/30 backdrop-blur-md z-10 border border-white/30 rounded-none">
+                {(searchCategory === 'Tags' ? tagsOptions : peopleOptions).map((option, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleOptionSelect(option)}
+                    className="block w-full text-left px-4 py-2 text-white hover:bg-white/20"
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       )}
 
-      {/* Right side: Home Button and Login/Profile */}
+      {/* Right side buttons */}
       <div className="flex gap-4 items-center ml-auto">
         <button
           onClick={() => onNavigate('home')}
@@ -78,11 +153,10 @@ function Navbar({ onNavigate, currentPage }) {
               className="text-white hover:text-yellow-300 font-semibold px-3 py-1 flex items-center"
             >
               <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-              {userName ? userName : 'Profile'} {/* Display profile name here */}
+              {userName || 'Profile'}
             </button>
 
-            {/* Dropdown menu for logged-in user */}
-            <div className="absolute right-0 mt-1 w-48 rounded-md shadow-lg bg-[#0d1321] border border-white/20 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
+            <div className="absolute right-0 mt-1 w-48 bg-[#0d1321] border border-white/20 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
               <div className="py-1">
                 <button
                   onClick={() => onNavigate('profile')}
