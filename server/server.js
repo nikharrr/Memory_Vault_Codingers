@@ -9,13 +9,14 @@ const port = process.env.PORT || 5000;
 const memoriesRouter = require('./routes/memories');
 const patientsRouter = require('./routes/patients');
 const profileRouter = require('./routes/profile')
-
+const peopleRouter = require('./routes/people');
 app.use(cors());
 app.use(bodyParser.json());
 
 app.use('/memories', memoriesRouter); 
 app.use('/patients', patientsRouter);
 app.use('/',profileRouter);
+app.use('/',peopleRouter);
 
 app.get('/', (req, res) => {
   res.send('Memory Archive Backend Running');
