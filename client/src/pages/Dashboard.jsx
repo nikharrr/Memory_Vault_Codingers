@@ -6,23 +6,38 @@ function Dashboard() {
   const [stats, setStats] = useState({ total: 0, recent: 0, favorites: 0 });
 
   useEffect(() => {
-    // Simulate fetching user data from localStorage or session
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       const user = JSON.parse(storedUser);
-      setUserName(user.full_name);
+      setUserName(user.name);
     }
 
-    // Dummy data for recent memories
-    setRecentMemories([
-      { id: 1, title: 'Beach Day', date: '2025-04-20', image: 'https://source.unsplash.com/300x200/?beach' },
-      { id: 2, title: 'Family Picnic', date: '2025-04-15', image: 'https://source.unsplash.com/300x200/?picnic' },
-      { id: 3, title: 'Garden Visit', date: '2025-04-10', image: 'https://source.unsplash.com/300x200/?garden' }
-    ]);
+    // Reset initial memories to empty, will connect to backend later
+    setRecentMemories([]);
+    setStats({ total: 0, recent: 0, favorites: 0 });
 
-    // Dummy stats
-    setStats({ total: 24, recent: 3, favorites: 7 });
   }, []);
+
+  // Update stats whenever memories change (connected to backend)
+  useEffect(() => {
+    setStats({
+      total: recentMemories.length,
+      recent: recentMemories.length, // Change this logic as needed based on your requirements
+      favorites: recentMemories.filter(memory => memory.favorite).length
+    });
+  }, [recentMemories]);
+
+  // Dummy add memory function (you can connect this to a real form later)
+  const handleAddMemory = () => {
+    const newMemory = {
+      id: Date.now(),
+      title: `New Memory ${recentMemories.length + 1}`,
+      date: new Date().toISOString().slice(0, 10),
+      image: 'https://source.unsplash.com/300x200/?memory',
+      favorite: Math.random() < 0.5 // randomly favorite or not
+    };
+    setRecentMemories(prev => [newMemory, ...prev]);
+  };
 
   return (
     <div className="max-w-5xl mx-auto">
@@ -48,22 +63,29 @@ function Dashboard() {
 
       <h2 className="text-2xl font-bold text-yellow-300 mb-4">Recent Memories</h2>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        {recentMemories.map(memory => (
-          <div key={memory.id} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl overflow-hidden">
-            <img src={memory.image} alt={memory.title} className="w-full h-40 object-cover" />
-            <div className="p-4">
-              <h3 className="font-semibold mb-1">{memory.title}</h3>
-              <p className="text-sm text-gray-300">{memory.date}</p>
+        {recentMemories.length === 0 ? (
+          <p className="text-gray-300">No memories added yet!</p>
+        ) : (
+          recentMemories.map(memory => (
+            <div key={memory.id} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl overflow-hidden">
+              <img src={memory.image} alt={memory.title} className="w-full h-40 object-cover" />
+              <div className="p-4">
+                <h3 className="font-semibold mb-1">{memory.title}</h3>
+                <p className="text-sm text-gray-300">{memory.date}</p>
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-xl">
           <h2 className="text-xl font-bold text-yellow-300 mb-4">Quick Actions</h2>
           <div className="grid grid-cols-2 gap-4">
-            <button className="bg-yellow-600/30 hover:bg-yellow-600/50 border border-yellow-500 p-4 rounded-lg text-left">
+            <button
+              className="bg-yellow-600/30 hover:bg-yellow-600/50 border border-yellow-500 p-4 rounded-lg text-left"
+              onClick={handleAddMemory}
+            >
               <div className="text-lg font-semibold mb-1">Add Memory</div>
               <p className="text-xs text-gray-300">Record a new memory</p>
             </button>
@@ -81,7 +103,7 @@ function Dashboard() {
             </button>
           </div>
         </div>
-        
+
         <div className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-xl">
           <h2 className="text-xl font-bold text-yellow-300 mb-4">Memory Calendar</h2>
           <div className="text-center p-6">
