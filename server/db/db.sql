@@ -18,7 +18,8 @@ CREATE TABLE People (
     name VARCHAR(100) NOT NULL,
     patient_id INT REFERENCES Patients(patient_id) ON DELETE CASCADE ON UPDATE CASCADE,
     relationship VARCHAR(100),
-    image_url TEXT
+    image_url TEXT,
+    favorite BOOLEAN DEFAULT FALSE
 );
 
 -- Memories table
@@ -30,7 +31,8 @@ CREATE TABLE Memories (
     image_url TEXT,  -- path or URL to the uploaded image
     memory_date DATE CHECK (memory_date <= CURRENT_DATE),
     last_accessed TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    favorite BOOLEAN DEFAULT FALSE
 );
 
 -- Tags table

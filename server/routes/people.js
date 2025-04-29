@@ -79,6 +79,7 @@ router.post('/:patient_id/people/create', async (req, res) => {
 
 router.delete('/:patient_id/people/delete/:person_id', async (req, res) => {
     const { patient_id, person_id } = req.params;
+
     try {
         const result = await db.query('DELETE FROM people WHERE person_id = $1 AND patient_id = $2 RETURNING *', [person_id, patient_id]);
         res.json(result.rows);
@@ -86,4 +87,34 @@ router.delete('/:patient_id/people/delete/:person_id', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 })
+
+router.patch('/:patient_id/people/edit/:person_id', async (req, res) => {
+    const { patient_id, person_id } = req.params;
+    const { favorite } = req.body;
+    try {
+       
+        // Update favorite status
+        const result = await db.query(
+            `UPDATE people 
+             SET favorite = $1
+             WHERE person_id = $2 AND patient_id = $3
+             RETURNING *`,
+            [favorite, person_id, patient_id]
+        );
+
+        // 3. Return the updated record
+        res.json({
+            success: true,
+            person: result.rows[0]
+        });
+        
+    } catch (err) {
+        console.error('Error toggling favorite:', err);
+        res.status(500).json({ 
+            success: false,
+            error: 'Internal server error',
+            details: err.message 
+        });
+    }
+});
 module.exports = router;
