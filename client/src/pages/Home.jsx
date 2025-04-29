@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 
 
+
 function Home() {
   // Expanded dummy memory data
+
   const allMemories = [
     { id: 1, src: 'https://source.unsplash.com/150x200/?sunset', date: '2024-01-15', tags: ['Nature', 'Travel'], people: ['Alice', 'Bob'] },
     { id: 2, src: 'https://source.unsplash.com/150x200/?sunset', date: '2024-02-22', tags: ['Nature'], people: ['Charlie'] },
@@ -51,7 +53,9 @@ function Home() {
     };
   }, []);
 
+
   // Group memories by month/year and sort in reverse chronological order
+
   const getSortedMemoryGroups = () => {
     const groups = memories.reduce((acc, memory) => {
       const monthYear = new Date(memory.date).toLocaleString('default', { month: 'long', year: 'numeric' });
@@ -60,12 +64,16 @@ function Home() {
       return acc;
     }, {});
 
+
     // Convert to array and sort by date (newest first)
+
     return Object.entries(groups)
       .map(([monthYear, memories]) => ({
         monthYear,
         memories: memories.sort((a, b) => new Date(b.date) - new Date(a.date)),
+
         timestamp: new Date(memories[0].date) // Use first memory's date for sorting groups
+
       }))
       .sort((a, b) => b.timestamp - a.timestamp);
   };
@@ -88,10 +96,12 @@ function Home() {
   return (
     <div className="relative w-full min-h-screen pt-10 flex flex-col items-center overflow-hidden">
       {/* Welcome Message */}
+
       <div className="absolute top-0 w-full  text-center bg-white/10 backdrop-blur-md border border-white/20 p-8 rounded-xl text-yellow-300 drop-shadow-md">
         <h1 className="text-xl font-bold tracking-normal ">
           Welcome to Memory Moments ✨
         </h1>
+
       </div>
 
       {/* Memories Grid */}
