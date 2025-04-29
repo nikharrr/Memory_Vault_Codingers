@@ -17,7 +17,8 @@ CREATE TABLE People (
     person_id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     patient_id INT REFERENCES Patients(patient_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    relationship VARCHAR(100)
+    relationship VARCHAR(100),
+    image_url TEXT
 );
 
 -- Memories table
