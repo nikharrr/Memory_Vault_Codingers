@@ -4,7 +4,7 @@ const cloudinary = require('../cloudinary');
 const db = require('../db');
 
 // Get all memories
-router.get('/',async (req,res) => {
+router.get('/:patient_id',async (req,res) => {
   try {
     const result = await db.query('SELECT * FROM memories ORDER BY memory_date DESC');
     res.json(result.rows);
@@ -149,6 +149,26 @@ router.get('/:patient_id/search',async (req,res) => {
     const result = await db.query(query,params);
     res.json(result.rows);
 
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/:patient_id/favorites',async (req,res) => {
+  const { patient_id } = req.params;
+  try {
+    const result = await db.query('SELECT * FROM memories WHERE patient_id = $1 AND favorite = true ORDER BY memory_date DESC', [patient_id]);
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.patch('/:patient_id/toggle-favorite/:memory_id',async (req,res) => {
+  const { patient_id,memory_id } = req.params;
+  try {
+    const result = await db.query('UPDATE memories SET favorite = NOT favorite WHERE memory_id = $1 AND patient_id = $2 RETURNING *', [memory_id,patient_id]);
+    res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
