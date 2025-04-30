@@ -2,8 +2,30 @@ import { useState, useEffect } from 'react';
 
 function Dashboard() {
   const [userName, setUserName] = useState('Guest');
-  const [recentMemories, setRecentMemories] = useState([]);
-  const [stats, setStats] = useState({ total: 0, recent: 0, favorites: 0 });
+  const [favoriteMemories, setFavoriteMemories] = useState([]);
+  const [stats, setStats] = useState({ total: 0, favorites: 0 });
+
+  // Dummy favorite memories data
+  const dummyFavorites = [
+    {
+      id: 1,
+      title: 'Beach',
+      image: 'https://source.unsplash.com/300x400/?beach',
+      date: '2025-04-01',
+    },
+    {
+      id: 2,
+      title: 'Sunset',
+      image: 'https://source.unsplash.com/300x400/?sunset',
+      date: '2025-04-02',
+    },
+    {
+      id: 3,
+      title: 'Picnic',
+      image: 'https://source.unsplash.com/300x400/?picnic',
+      date: '2025-04-05',
+    },
+  ];
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
@@ -12,31 +34,21 @@ function Dashboard() {
       setUserName(user.name);
     }
 
-    // Reset initial memories to empty, will connect to backend later
-    setRecentMemories([]);
-    setStats({ total: 0, recent: 0, favorites: 0 });
-
+    // Set initial favorite memories
+    setFavoriteMemories(dummyFavorites);
+    
+    // Initialize stats
+    setStats({
+      total: 0,
+      favorites: 0
+    });
   }, []);
 
-  // Update stats whenever memories change (connected to backend)
-  useEffect(() => {
-    setStats({
-      total: recentMemories.length,
-      recent: recentMemories.length, // Change this logic as needed based on your requirements
-      favorites: recentMemories.filter(memory => memory.favorite).length
-    });
-  }, [recentMemories]);
-
-  // Dummy add memory function (you can connect this to a real form later)
+  // Handle navigation to add memory page (to be implemented)
   const handleAddMemory = () => {
-    const newMemory = {
-      id: Date.now(),
-      title: `New Memory ${recentMemories.length + 1}`,
-      date: new Date().toISOString().slice(0, 10),
-      image: 'https://source.unsplash.com/300x200/?memory',
-      favorite: Math.random() < 0.5 // randomly favorite or not
-    };
-    setRecentMemories(prev => [newMemory, ...prev]);
+    // This will be connected to navigation to the add memory page
+    console.log("Navigate to add memory page");
+    // No state changes here
   };
 
   return (
@@ -46,14 +58,10 @@ function Dashboard() {
         <p className="text-lg text-gray-300">Your memory journey continues today</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
         <div className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-xl text-center">
           <h3 className="text-2xl font-semibold mb-2">{stats.total}</h3>
           <p className="text-gray-300">Total Memories</p>
-        </div>
-        <div className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-xl text-center">
-          <h3 className="text-2xl font-semibold mb-2">{stats.recent}</h3>
-          <p className="text-gray-300">Recent Additions</p>
         </div>
         <div className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-xl text-center">
           <h3 className="text-2xl font-semibold mb-2">{stats.favorites}</h3>
@@ -61,17 +69,29 @@ function Dashboard() {
         </div>
       </div>
 
-      <h2 className="text-2xl font-bold text-yellow-300 mb-4">Recent Memories</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        {recentMemories.length === 0 ? (
-          <p className="text-gray-300">No memories added yet!</p>
+      <h2 className="text-2xl font-bold text-yellow-300 mb-6">Your Favorites</h2>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+        {favoriteMemories.length === 0 ? (
+          <p className="text-gray-300">No favorite memories yet!</p>
         ) : (
-          recentMemories.map(memory => (
-            <div key={memory.id} className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl overflow-hidden">
-              <img src={memory.image} alt={memory.title} className="w-full h-40 object-cover" />
-              <div className="p-4">
-                <h3 className="font-semibold mb-1">{memory.title}</h3>
-                <p className="text-sm text-gray-300">{memory.date}</p>
+          favoriteMemories.map(memory => (
+            <div
+              key={memory.id}
+              className="flex flex-col items-center bg-[#fef1b0] p-4 rounded-xl shadow-lg border border-white/40"
+            >
+              {/* Polaroid-style memory image */}
+              <div className="relative mb-4 w-full h-48 border-2 border-white rounded-lg overflow-hidden bg-white/40">
+                <img
+                  src={memory.image}
+                  alt={memory.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+
+              {/* Title and date */}
+              <div className="text-center">
+                <h3 className="text-lg font-semibold text-yellow-500 mb-2">{memory.title}</h3>
+                <p className="text-xs text-gray-600">{new Date(memory.date).toLocaleDateString()}</p>
               </div>
             </div>
           ))

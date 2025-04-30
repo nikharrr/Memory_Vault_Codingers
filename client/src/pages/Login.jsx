@@ -2,15 +2,15 @@ import { useState } from 'react';
 import axios from 'axios'; // ✅ Axios imported
 
 function Login({ onNavigate }) {
-  const [activeTab, setActiveTab] = useState('login');
-  const [formData, setFormData] = useState({
+  const [activeTab,setActiveTab] = useState('login');
+  const [formData,setFormData] = useState({
     email: '',
     password: '',
     name: '',
     confirmPassword: ''
   });
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [error,setError] = useState('');
+  const [loading,setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -31,16 +31,14 @@ function Login({ onNavigate }) {
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/patients/login', {
+      const response = await axios.post('http://localhost:5000/patients/login',{
         email: formData.email,
         password: formData.password,
       });
 
       const user = response.data.user;
-      localStorage.setItem('user', JSON.stringify(user));
-
-      onNavigate('dashboard');
-      window.location.reload();
+      localStorage.setItem('user',JSON.stringify(user));
+      onNavigate('home');
     } catch (error) {
       console.error(error);
       if (error.response && error.response.data && error.response.data.message) {
@@ -71,7 +69,7 @@ function Login({ onNavigate }) {
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/patients/signup', {
+      const response = await axios.post('http://localhost:5000/patients/signup',{
         full_name: formData.name,
         email: formData.email,
         password: formData.password,
@@ -79,10 +77,8 @@ function Login({ onNavigate }) {
       });
 
       const user = response.data.patient;
-      localStorage.setItem('user', JSON.stringify(user));
-
-      onNavigate('dashboard');
-      window.location.reload();
+      localStorage.setItem('user',JSON.stringify(user));
+      onNavigate('home');
     } catch (error) {
       console.error(error);
       if (error.response && error.response.data && error.response.data.message) {
@@ -100,21 +96,19 @@ function Login({ onNavigate }) {
       <div className="bg-white/10 backdrop-blur-md border border-white/20 p-8 rounded-xl w-full max-w-md">
         <div className="flex mb-6">
           <button
-            className={`flex-1 py-2 font-semibold border-b-2 ${
-              activeTab === 'login'
+            className={`flex-1 py-2 font-semibold border-b-2 ${activeTab === 'login'
                 ? 'border-yellow-300 text-yellow-300'
                 : 'border-transparent text-gray-400'
-            }`}
+              }`}
             onClick={() => setActiveTab('login')}
           >
             Login
           </button>
           <button
-            className={`flex-1 py-2 font-semibold border-b-2 ${
-              activeTab === 'signup'
+            className={`flex-1 py-2 font-semibold border-b-2 ${activeTab === 'signup'
                 ? 'border-yellow-300 text-yellow-300'
                 : 'border-transparent text-gray-400'
-            }`}
+              }`}
             onClick={() => setActiveTab('signup')}
           >
             Sign Up
@@ -154,11 +148,10 @@ function Login({ onNavigate }) {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full ${
-                loading
+              className={`w-full ${loading
                   ? 'bg-yellow-700'
                   : 'bg-yellow-600 hover:bg-yellow-700'
-              } text-white font-bold py-2 px-4 rounded transition-colors`}
+                } text-white font-bold py-2 px-4 rounded transition-colors`}
             >
               {loading ? 'Logging in...' : 'Login'}
             </button>
@@ -224,11 +217,10 @@ function Login({ onNavigate }) {
             <button
               type="submit"
               disabled={loading}
-              className={`w-full ${
-                loading
+              className={`w-full ${loading
                   ? 'bg-yellow-700'
                   : 'bg-yellow-600 hover:bg-yellow-700'
-              } text-white font-bold py-2 px-4 rounded transition-colors`}
+                } text-white font-bold py-2 px-4 rounded transition-colors`}
             >
               {loading ? 'Creating Account...' : 'Sign Up'}
             </button>

@@ -13,7 +13,6 @@ function AddMemory() {
 
   const user = JSON.parse(localStorage.getItem('user'));
   const patient_id = user ? user.patient_id : null;
-
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
     
@@ -100,6 +99,7 @@ function AddMemory() {
         setImage(null);
         
         setPopupMessage('Memory saved successfully!');
+        window.dispatchEvent(new Event('memoryAdded'));
         setPopupType('success');
       } catch (error) {
         console.error('Error saving memory:', error);
