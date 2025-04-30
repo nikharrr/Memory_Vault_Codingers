@@ -1,41 +1,42 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 function Home() {
-  const allMemories = [
-    { id: 1, src: 'https://source.unsplash.com/150x200/?sunset', date: '2024-01-15', tags: ['Nature', 'Travel'], people: ['Alice', 'Bob'] },
-    { id: 2, src: 'https://source.unsplash.com/150x200/?sunset', date: '2024-02-22', tags: ['Nature'], people: ['Charlie'] },
-    { id: 3, src: 'https://source.unsplash.com/150x200/?picnic', date: '2024-01-10', tags: ['Family'], people: ['Alice', 'Diana'] },
-    { id: 4, src: 'https://source.unsplash.com/150x200/?forest', date: '2024-03-05', tags: ['Nature', 'Travel'], people: ['Bob'] },
-    { id: 5, src: 'https://source.unsplash.com/150x200/?mountain', date: '2024-02-12', tags: ['Nature', 'Travel'], people: ['Charlie', 'Diana'] },
-    { id: 6, src: 'https://source.unsplash.com/150x200/?lake', date: '2024-01-30', tags: ['Nature', 'Family'], people: ['Alice', 'Bob', 'Charlie'] },
-  ];
-
-  const [memories, setMemories] = useState(allMemories);
+  const [memories, setMemories] = useState([]);
   const [searchParams, setSearchParams] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  // Get patient ID from localStorage or set a default for testing
+  const getPatientId = () => {
+    const user = localStorage.getItem('user');
+    if (user) {
+      return JSON.parse(user).id;
+    }
+    return 1; // Default patient ID for testing
+  };
+
+  // Fetch all memories when component mounts
+  useEffect(() => {
+    fetchMemories();
+  }, []);
+
+  // Handle search params changes
   useEffect(() => {
     const handleStorageChange = () => {
       const searchData = localStorage.getItem('memorySearch');
       if (searchData) {
         const params = JSON.parse(searchData);
         setSearchParams(params);
-
-        if (params.category === 'Tags' && params.values?.length > 0) {
-          const filtered = allMemories.filter(memory =>
-            memory.tags.some(tag => params.values.includes(tag))
-          );
-          setMemories(filtered);
-        } else if (params.category === 'People' && params.values?.length > 0) {
-          const filtered = allMemories.filter(memory =>
-            memory.people.some(person => params.values.includes(person))
-          );
-          setMemories(filtered);
+        
+        if (params.category && params.values?.length > 0) {
+          performSearch(params.category, params.values);
         } else {
-          setMemories(allMemories);
+          fetchMemories();
         }
       } else {
         setSearchParams(null);
-        setMemories(allMemories);
+        fetchMemories();
       }
     };
 
@@ -48,6 +49,74 @@ function Home() {
       window.removeEventListener('memorySearchUpdated', handleStorageChange);
     };
   }, []);
+
+  // Fetch all memories from the backend
+  const fetchMemories = async () => {
+    setLoading(true);
+    try {
+      const patientId = getPatientId();
+      const response = await axios.get(`http://localhost:5000/memories/${patientId}`);
+      
+      // Transform the data to match the component's expected structure
+      const transformedMemories = response.data.map(memory => ({
+        id: memory.memory_id,
+        src: memory.image_url || 'https://source.unsplash.com/150x200/?sunset', // Fallback image if none exists
+        date: memory.memory_date,
+        title: memory.title,
+        tags: [], // Will be populated from a separate endpoint if needed
+        people: [], // Will be populated from a separate endpoint if needed
+        favorite: memory.favorite
+      }));
+      
+      setMemories(transformedMemories);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching memories:', err);
+      setError('Failed to load memories. Please try again later.');
+      setMemories([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Perform search using backend API
+  const performSearch = async (category, values) => {
+    setLoading(true);
+    try {
+      const patientId = getPatientId();
+      let response;
+      
+      if (category === 'Tags') {
+        response = await axios.get(`http://localhost:5000/memories/${patientId}/search`, {
+          params: { tags: values.join(',') }
+        });
+      } else if (category === 'People') {
+        response = await axios.get(`http://localhost:5000/memories/${patientId}/search`, {
+          params: { people: values.join(',') }
+        });
+      }
+      
+      // Transform the search results
+      const transformedMemories = response.data.map(memory => ({
+        id: memory.memory_id,
+        src: memory.image_url || 'https://source.unsplash.com/150x200/?sunset',
+        date: memory.memory_date,
+        title: memory.title,
+        tags: [], // These would need to be populated from a separate endpoint if needed
+        people: [], // These would need to be populated from a separate endpoint if needed
+        favorite: memory.favorite
+      }));
+      
+      setMemories(transformedMemories);
+      setError(null);
+    } catch (err) {
+      console.error('Error performing search:', err);
+      setError('Search failed. Please try again.');
+      setMemories([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getSortedMemoryGroups = () => {
     const groups = memories.reduce((acc, memory) => {
@@ -89,22 +158,35 @@ function Home() {
       </div>
 
       {/* Memories Grid */}
-      <div className="w-full mt-36 max-w-7xl px-4">
+      <div className="w-full mt-24 max-w-7xl px-4">
         {renderSearchHeader()}
 
+        {/* Loading and Error States */}
+        {loading && (
+          <div className="flex justify-center items-center h-64">
+            <p className="text-white text-xl">Loading memories...</p>
+          </div>
+        )}
+
+        {error && (
+          <div className="flex justify-center items-center h-64">
+            <p className="text-red-400 text-xl">{error}</p>
+          </div>
+        )}
+
         {/* Curved Divider */}
-        {(!searchParams?.category || !searchParams?.values?.length) && (
+        {(!searchParams?.category || !searchParams?.values?.length) && !loading && !error && (
           <svg height="80" width="100%" className="-mb-12">
             <path d="M 0 50 Q 50% 0 100% 50" stroke="white" strokeWidth="4" fill="transparent" />
           </svg>
         )}
 
         {/* No Memories Found */}
-        {memories.length === 0 ? (
+        {!loading && !error && memories.length === 0 ? (
           <div className="flex justify-center items-center h-64">
             <p className="text-white text-xl">No memories found. Try a different search.</p>
           </div>
-        ) : (
+        ) : !loading && !error && (
           <div className="w-full">
             {getSortedMemoryGroups().map(({ monthYear, memories: monthMemories }) => (
               <div key={monthYear} className="mb-12">
@@ -121,12 +203,22 @@ function Home() {
                           alt={`Memory ${memory.id}`}
                           className="w-full h-full object-cover"
                         />
+                        {memory.favorite && (
+                          <div className="absolute top-1 right-1 bg-yellow-500 text-xs text-black p-1 rounded-full">
+                            ★ Favorite
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Title */}
+                      <div className="w-full px-2 mb-2">
+                        <h4 className="text-sm text-white text-center truncate">{memory.title}</h4>
                       </div>
 
                       {/* Highlight selected Tags/People */}
                       {searchParams?.category && searchParams?.values?.length > 0 && (
                         <div className="w-full px-1">
-                          {searchParams.category === 'Tags' && (
+                          {searchParams.category === 'Tags' && memory.tags && (
                             <div className="flex flex-wrap gap-1 mt-1">
                               {memory.tags.map(tag => (
                                 <span
@@ -141,7 +233,7 @@ function Home() {
                               ))}
                             </div>
                           )}
-                          {searchParams.category === 'People' && (
+                          {searchParams.category === 'People' && memory.people && (
                             <div className="flex flex-wrap gap-1 mt-1">
                               {memory.people.map(person => (
                                 <span
@@ -162,7 +254,7 @@ function Home() {
                   ))}
                 </div>
               </div>
-            ))}
+            ))}N
           </div>
         )}
       </div>
