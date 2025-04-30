@@ -189,13 +189,13 @@ function Home() {
         </div>
       );
     }
-    return <h2 className="text-3xl font-extrabold text-yellow-300 mb-8">Your Memories</h2>;
+    return <h2 className="text-3xl font-extrabold text-yellow-300 mb-2 mt-6">Your Memories</h2>;
   };
 
 
   return (
     <div className="relative w-full min-h-screen pt-10 flex flex-col items-center overflow-hidden">
-      <div className="absolute top-0 w-full text-center bg-white/10 backdrop-blur-md border border-white/20 p-8 rounded-xl text-yellow-300 drop-shadow-md">
+      <div className="absolute top-26 w-full text-center bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-xl text-yellow-300 drop-shadow-md">
         <h1 className="text-xl font-bold tracking-normal">Welcome to Memory Moments ✨</h1>
       </div>
 
