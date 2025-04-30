@@ -12,9 +12,7 @@ function ViewMemories() {
   return (
     <div className="flex flex-col items-center w-full pt-10">
       
-      <h2 className="text-6xl font-extrabold text-yellow-300 mb-8">
-        View Memories
-      </h2>
+      <h2 className="text-6xl font-extrabold text-yellow-300 mb-8">Your Favorites</h2>
 
       {/* Curved string */}
       <svg height="80" width="100%" className="-mb-12">

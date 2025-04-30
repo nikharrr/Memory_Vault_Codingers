@@ -1,3 +1,4 @@
+
 import { all } from 'axios';
 import React,{ useState,useEffect } from 'react';
 
@@ -29,6 +30,7 @@ function Home() {
       const date = new Date(year,month,day);
       if (!isNaN(date)) {
         return date;
+
       }
     }
     console.warn(`Invalid date format: ${dateString}`);
@@ -154,6 +156,7 @@ function Home() {
   },[allMemories]);
 
   // Group memories by month/year
+
   const getSortedMemoryGroups = () => {
     const groups = filteredMemories.reduce((acc,memory) => {
       const isValidDate = memory.date instanceof Date && !isNaN(memory.date);
@@ -287,6 +290,7 @@ function Home() {
                           </div>
                         ))}
                       </div>
+
                     </div>
                   ))}
                   {filteredMemories.length === 0 && !searchParams?.category && !loading && !error && allMemories.length > 0 && (
@@ -300,11 +304,13 @@ function Home() {
                     </div>
                   )}
                 </div>
+
               )}
             </>
           )}
         </div>
       )}
+
     </div>
   );
 }
