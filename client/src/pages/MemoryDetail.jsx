@@ -330,11 +330,11 @@ function MemoryDetail() {
         </div>
       )}
 
-      <div className="text-3xl font-extrabold mb-4 text-center text-amber-300">People Selected: {selectedProfiles.length}</div>
+      <div className="text-4xl font-extrabold mb-4 text-center text-amber-300">People Selected: {selectedProfiles.length}</div>
 
       {/* Profiles List */}
       <div 
-        className="w-full max-w-6xl mx-auto max-h-90 overflow-y-auto mb-6 bg-transparent p-4 rounded-lg"
+        className="w-full max-w-6xl mx-auto max-h-100 overflow-y-auto mb-6 mt-4 bg-transparent p-4 rounded-lg"
         style={{
           scrollbarWidth: 'thin',
           scrollbarColor: '#4B5563 transparent',
