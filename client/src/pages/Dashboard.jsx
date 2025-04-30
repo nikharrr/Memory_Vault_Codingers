@@ -79,8 +79,10 @@ function Dashboard() {
   const [userName, setUserName] = useState('Guest');
   const [favoriteMemories, setFavoriteMemories] = useState([]);
   const [stats, setStats] = useState({ total: 0, favorites: 0 });
+
   const [showViewMemories, setShowViewMemories] = useState(false);
   
+
   // Dummy favorite memories data
   const dummyFavorites = [
     {
@@ -102,13 +104,14 @@ function Dashboard() {
       date: '2025-04-05',
     },
   ];
-  
+
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       const user = JSON.parse(storedUser);
       setUserName(user.name);
     }
+
     // Set initial favorite memories
     setFavoriteMemories(dummyFavorites);
     
@@ -118,7 +121,7 @@ function Dashboard() {
       favorites: 0
     });
   }, []);
-  
+
   // Handle navigation to add memory page (to be implemented)
   const handleAddMemory = () => {
     // This will be connected to navigation to the add memory page
@@ -158,6 +161,7 @@ function Dashboard() {
         <h1 className="text-4xl font-bold text-yellow-300 mb-2">Welcome back, {userName}</h1>
         <p className="text-lg text-gray-300">Your memory journey continues today</p>
       </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
         <div className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-xl text-center">
           <h3 className="text-2xl font-semibold mb-2">{stats.total}</h3>
@@ -167,11 +171,14 @@ function Dashboard() {
           className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-xl text-center cursor-pointer hover:bg-white/20"
           onClick={handleViewFavorites}
         >
+
           <h3 className="text-2xl font-semibold mb-2">{stats.favorites}</h3>
           <p className="text-gray-300">Favorite Memories</p>
         </div>
       </div>
+
       <h2 className="text-2xl font-bold text-yellow-300 mb-6">Recent Memories</h2>
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
         {favoriteMemories.length === 0 ? (
           <p className="text-gray-300">No favorite memories yet!</p>
@@ -189,6 +196,7 @@ function Dashboard() {
                   className="w-full h-full object-cover"
                 />
               </div>
+
               {/* Title and date */}
               <div className="text-center">
                 <h3 className="text-lg font-semibold text-yellow-500 mb-2">{memory.title}</h3>

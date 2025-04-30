@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 const { config } = require('dotenv');
+const cloudinary = require('../cloudinary');
+config(); // Load environment variables from .env file
 
 router.get('/:patient_id/people', async (req, res) => {
     const {patient_id} = req.params;
@@ -16,7 +18,7 @@ router.get('/:patient_id/people', async (req, res) => {
 router.post('/:patient_id/people/create', async (req, res) => {
     const { patient_id } = req.params;
     const { name, relationship, image_url } = req.body;
-    
+    const lowername = name.toLowerCase(); // Convert name to lowercase for consistency
     try {
         // 1. Verify required fields
         if (!name || !relationship) {
@@ -35,7 +37,7 @@ router.post('/:patient_id/people/create', async (req, res) => {
         // 3. Insert new person
         const insertResult = await db.query(
             'INSERT INTO people (name, patient_id, relationship) VALUES ($1, $2, $3) RETURNING person_id, name, patient_id, relationship',
-            [name, patient_id, relationship]
+            [lowername , patient_id, relationship]
         );
         
         const newPerson = insertResult.rows[0];
@@ -91,7 +93,7 @@ router.delete('/:patient_id/people/delete/:person_id', async (req, res) => {
     }
 })
 
-router.patch('/:patient_id/people/edit/:person_id', async (req, res) => {
+router.patch('/:patient_id/people/toggle-fav/:person_id', async (req, res) => {
     const { patient_id, person_id } = req.params;
     const { favorite } = req.body;
     try {
@@ -120,4 +122,67 @@ router.patch('/:patient_id/people/edit/:person_id', async (req, res) => {
         });
     }
 });
+
+router.put('/:patient_id/people/edit/:person_id', async (req, res) => {
+    const { patient_id, person_id } = req.params;
+    const { name, relationship, image_url } = req.body;
+    const lowername = name.toLowerCase();
+
+    try {
+        // Verify required fields
+        if (!name || !relationship) {
+            return res.status(400).json({ error: "Name and relationship are required" });
+        }
+
+        // Check if patient exists 
+        const patientExists = await db.query(
+            'SELECT 1 FROM patients WHERE patient_id = $1',
+            [patient_id]
+        );
+        if (patientExists.rows.length === 0) {
+            return res.status(404).json({ error: "Patient not found" });
+        }
+
+        // Update person details
+        const updatePerson = await db.query(
+            'UPDATE people SET name = $1, relationship = $2 WHERE person_id = $3 AND patient_id = $4 RETURNING *',
+            [lowername, relationship, person_id, patient_id]
+        );
+
+        if (updatePerson.rows.length === 0) {
+            return res.status(404).json({ error: "Person not found" });
+        }
+
+        // Handle image upload if provided
+        if (image_url) {
+            try {
+                const cloudinaryImage = await cloudinary.uploader.upload(image_url, {
+                    folder: `patients/${patient_id}/people/${person_id}`,
+                    public_id: `${patient_id}_${person_id}_${Date.now()}`,
+                    overwrite: true
+                });
+
+                await db.query(
+                    'UPDATE people SET image_url = $1 WHERE person_id = $2',
+                    [cloudinaryImage.secure_url, person_id]
+                );
+            } catch (uploadError) {
+                return res.status(500).json({
+                    error: "Image upload failed",
+                    details: uploadError.message
+                });
+            }
+        }
+
+        res.json({ success: true, person: updatePerson.rows[0] });
+    } catch (err) {
+        res.status(500).json({
+            error: "Server error",
+            details: err.message
+        });
+    }
+});
+
+
+
 module.exports = router;

@@ -13,7 +13,7 @@ const memoriesRouter = require('./routes/memories');
 const patientsRouter = require('./routes/patients');
 const profileRouter = require('./routes/profile')
 const peopleRouter = require('./routes/people');
-const searchbarRouter = require('./routes/searchbar');
+const searchbarRouter = require('./routes/searchbar'); 
 
 app.use(cors());
 app.use(bodyParser.json());  

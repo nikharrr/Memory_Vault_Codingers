@@ -59,27 +59,39 @@ router.post('/:patient_id/create',async (req,res) => {
 
     // Step 4: Insert Tags with patient_id
     for (const tagName of tags) {
-      let tag = await client.query(`SELECT tag_id FROM tags WHERE name = $1 AND patient_id = $2`,[tagName,patient_id]);
+      const lowerTag = tagName.toLowerCase(); // ✅ convert to lowercase
+    
+      let tag = await client.query(
+        `SELECT tag_id FROM tags WHERE name = $1 AND patient_id = $2`,
+        [lowerTag, patient_id]
+      );
+    
       if (tag.rows.length === 0) {
         tag = await client.query(
           `INSERT INTO tags (name, patient_id) VALUES ($1, $2) RETURNING tag_id`,
-          [tagName,patient_id]
+          [lowerTag, patient_id]
         );
       }
-      await client.query(`INSERT INTO memorytags (memory_id, tag_id) VALUES ($1, $2)`,[memoryId,tag.rows[0].tag_id]);
+    
+      await client.query(
+        `INSERT INTO memorytags (memory_id, tag_id) VALUES ($1, $2)`,
+        [memoryId, tag.rows[0].tag_id]
+      );
     }
+    
 
     // Step 5: Insert People with patient_id
     for (const personName of people_involved) {
-      let person = await client.query(`SELECT person_id FROM people WHERE name = $1 AND patient_id = $2`,[personName,patient_id]);
+      const lowercasePersonName = personName.toLowerCase(); // Convert for the SELECT query
+      let person = await client.query(`SELECT person_id FROM people WHERE name = $1 AND patient_id = $2`,[lowercasePersonName,patient_id]);
       if (person.rows.length === 0) {
-        person = await client.query(
-          `INSERT INTO people (name, patient_id) VALUES ($1, $2) RETURNING person_id`,
-          [personName,patient_id]
-        );
+          person = await client.query(
+              `INSERT INTO people (name, patient_id) VALUES ($1, $2) RETURNING person_id`,
+              [lowercasePersonName,patient_id] // Already lowercase here
+          );
       }
       await client.query(`INSERT INTO memorypeople (memory_id, person_id) VALUES ($1, $2)`,[memoryId,person.rows[0].person_id]);
-    }
+  }
 
     await client.query('COMMIT');
 

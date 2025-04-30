@@ -3,35 +3,39 @@ const router = express.Router();
 const cloudinary = require('../cloudinary');
 const db = require('../db');
 
-router.get('/:patient_id/tags',async (req,res) => {
-        const { patient_id } = req.params;
-        try {
-            const result = await db.query('SELECT * FROM tags WHERE patient_id = $1', [patient_id]);
-            res.json(result.rows);
-        } catch (err) {
-            res.status(500).json({ error: err.message });
-        }
-});
 
-router.get('/:patient_id/people', async (req, res) => {
-    const {patient_id} = req.params;
+router.get('/:patient_id/tagsName', async (req, res) => {
+    const { patient_id } = req.params;
     try {
-        const result = await db.query('SELECT * FROM people WHERE patient_id = $1', [patient_id]);
-        res.json(result.rows);
+        const result = await db.query('SELECT name FROM tags WHERE patient_id = $1', [patient_id]);
+        res.json(result.rows.map(row => row.name));
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
+
 });
 
-router.get('/:patient_id/search',async (req,res) => {
+
+
+router.get('/:patient_id/peopleName', async (req, res) => {
+    
     const { patient_id } = req.params;
-    // Accept comma-separated values for multiple tags/people
-    const { tags,people } = req.query;
+    try {
+        const result = await db.query('SELECT name FROM people WHERE patient_id = $1', [patient_id]);
+        res.json(result.rows.map(row => row.name));
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+
+});
+
+router.get('/:patient_id/search', async (req, res) => {
+    const { patient_id } = req.params;
+    const { tags, people } = req.query;
   
     try {
-      // Base query
       let query = `
-        SELECT DISTINCT m.memory_id, m.title, m.descrip, m.memory_date
+        SELECT DISTINCT m.memory_id, m.title, m.descrip, m.memory_date, m.image_url, m.favorite
         FROM memories m
         WHERE m.patient_id = $1
       `;
@@ -39,8 +43,8 @@ router.get('/:patient_id/search',async (req,res) => {
       let paramIndex = 2;
   
       // Process tags if provided
-      if (tags && !people) {
-        const tagArray = tags.split(',').map(tag => tag.trim());
+      if (tags) {
+        const tagArray = tags.split(',');
         query += `
           AND EXISTS (
             SELECT 1 FROM memorytags mt
@@ -52,9 +56,10 @@ router.get('/:patient_id/search',async (req,res) => {
         params.push(tagArray);
         paramIndex++;
       }
+  
       // Process people if provided
-      else if (people && !tags) {
-        const peopleArray = people.split(',').map(p => p.trim());
+      if (people) {
+        const peopleArray = people.split(',');
         query += `
           AND EXISTS (
             SELECT 1 FROM memorypeople mp
@@ -65,21 +70,40 @@ router.get('/:patient_id/search',async (req,res) => {
         `;
         params.push(peopleArray);
       }
-      // Error if both provided
-      else if (tags && people) {
-        return res.status(400).json({
-          error: "Please filter by either tags OR people, not both"
-        });
-      }
   
       query += ` ORDER BY m.memory_date DESC`;
   
-      const result = await db.query(query,params);
-      res.json(result.rows);
+      const result = await db.query(query, params);
+      
+      // Get tags and people for each memory
+      const memoriesWithDetails = await Promise.all(
+        result.rows.map(async (memory) => {
+          const [tagsRes, peopleRes] = await Promise.all([
+            db.query(`
+              SELECT t.name FROM memorytags mt
+              JOIN tags t ON mt.tag_id = t.tag_id
+              WHERE mt.memory_id = $1
+            `, [memory.memory_id]),
+            
+            db.query(`
+              SELECT p.name FROM memorypeople mp
+              JOIN people p ON mp.person_id = p.person_id
+              WHERE mp.memory_id = $1
+            `, [memory.memory_id])
+          ]);
   
+          return {
+            ...memory,
+            tags: tagsRes.rows.map(row => row.name),
+            people: peopleRes.rows.map(row => row.name)
+          };
+        })
+      );
+  
+      res.json(memoriesWithDetails);
     } catch (err) {
+      console.error('Search error:', err);
       res.status(500).json({ error: err.message });
     }
   });
-
   module.exports = router;
