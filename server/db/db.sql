@@ -1,5 +1,5 @@
 -- Drop tables if they already exist (safe reset during development)
-DROP TABLE IF EXISTS memories, patients, peopleInvolved, memoryTags, tags CASCADE;
+DROP TABLE IF EXISTS memories, patients, memoryTags, tags , People,MemoryPeople CASCADE;
 
 -- Patients table
 CREATE TABLE patients (
