@@ -1,23 +1,23 @@
-import { useState, useEffect, useRef } from 'react';
-import { ChevronDownIcon, MagnifyingGlassIcon, XMarkIcon, CheckIcon } from '@heroicons/react/24/solid';
+import { useState,useEffect,useRef } from 'react';
+import { ChevronDownIcon,MagnifyingGlassIcon,XMarkIcon,CheckIcon } from '@heroicons/react/24/solid';
 
-function Navbar({ onNavigate, currentPage }) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userName, setUserName] = useState('');
-  const [searchCategory, setSearchCategory] = useState('');
-  const [selectedOptions, setSelectedOptions] = useState([]);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isSubDropdownOpen, setIsSubDropdownOpen] = useState(false);
+function Navbar({ onNavigate,currentPage }) {
+  const [isLoggedIn,setIsLoggedIn] = useState(false);
+  const [userName,setUserName] = useState('');
+  const [searchCategory,setSearchCategory] = useState('');
+  const [selectedOptions,setSelectedOptions] = useState([]);
+  const [isDropdownOpen,setIsDropdownOpen] = useState(false);
+  const [isSubDropdownOpen,setIsSubDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   useEffect(() => {
     const searchData = localStorage.getItem('memorySearch');
     if (searchData) {
-      const { category, values } = JSON.parse(searchData);
+      const { category,values } = JSON.parse(searchData);
       setSearchCategory(category);
       setSelectedOptions(values || []);
     }
-  }, []);
+  },[]);
 
   useEffect(() => {
     const user = localStorage.getItem('user');
@@ -28,7 +28,7 @@ function Navbar({ onNavigate, currentPage }) {
     } else {
       setIsLoggedIn(false);
     }
-  }, []);
+  },[]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -37,11 +37,11 @@ function Navbar({ onNavigate, currentPage }) {
         setIsSubDropdownOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('mousedown',handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('mousedown',handleClickOutside);
     };
-  }, []);
+  },[]);
 
   const handleAuth = () => {
     if (isLoggedIn) {
@@ -70,13 +70,13 @@ function Navbar({ onNavigate, currentPage }) {
     if (selectedOptions.includes(option)) {
       newSelected = selectedOptions.filter(item => item !== option);
     } else {
-      newSelected = [...selectedOptions, option];
+      newSelected = [...selectedOptions,option];
     }
     setSelectedOptions(newSelected);
 
-    const searchParams = { category: searchCategory, values: newSelected };
+    const searchParams = { category: searchCategory,values: newSelected };
     if (newSelected.length > 0) {
-      localStorage.setItem('memorySearch', JSON.stringify(searchParams));
+      localStorage.setItem('memorySearch',JSON.stringify(searchParams));
     } else {
       localStorage.removeItem('memorySearch');
     }
@@ -102,8 +102,8 @@ function Navbar({ onNavigate, currentPage }) {
     window.dispatchEvent(new Event('memorySearchUpdated'));
   };
 
-  const tagsOptions = ['Nature', 'Family', 'Travel', 'Pets'];
-  const peopleOptions = ['Alice', 'Bob', 'Charlie', 'Diana'];
+  const tagsOptions = ['Nature','Family','Travel','Pets'];
+  const peopleOptions = ['Alice','Bob','Charlie','Diana'];
 
   const formatSelectedText = () => {
     if (selectedOptions.length === 0) {
@@ -116,13 +116,15 @@ function Navbar({ onNavigate, currentPage }) {
   };
 
   return (
-    <div className="fixed top-4 left-0 right-0 flex justify-between items-center z-20 px-6">
+
+    <div className="fixed top-4 left-0 right-0 flex justify-between items-center z-20 px-6 ">
       {/* Search Box */}
       {currentPage === 'home' && isLoggedIn && (
         <div className="flex justify-center w-full">
-          <div ref={dropdownRef} className="relative w-full max-w-2xl">
+          <div ref={dropdownRef} className="relative w-full max-w-2xl"> {/* Increased width from max-w-lg to max-w-2xl */}
+            {/* Search Bar */}
             <div
-              className="flex items-center w-full px-6 py-2 bg-white/30 border border-white/40 backdrop-blur-md rounded-full cursor-pointer shadow-sm"
+              className="flex items-center w-full px-6 py-2 bg-white/30 border border-white/40 backdrop-blur-md rounded-full cursor-pointer shadow-sm" // made rounded-full and more padding
               onClick={() => {
                 if (selectedOptions.length === 0) {
                   setIsDropdownOpen(!isDropdownOpen);
@@ -143,12 +145,14 @@ function Navbar({ onNavigate, currentPage }) {
                 </button>
               ) : (
                 <ChevronDownIcon
-                  className={`w-5 h-5 text-white ml-2 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
+                  className={`w-5 h-5 text-white ml-2 transition-transform ${isDropdownOpen ? 'rotate-180' : ''
+                    }`}
                 />
               )}
             </div>
 
-            {/* Main Dropdown */}
+
+            {/* Main Dropdown - Clean borderless style */}
             {isDropdownOpen && (
               <div className="absolute top-full left-0 w-full mt-1 bg-white/20 backdrop-blur-lg rounded-lg shadow-lg z-10 overflow-hidden">
                 <button
@@ -166,21 +170,20 @@ function Navbar({ onNavigate, currentPage }) {
               </div>
             )}
 
-            {/* Sub Dropdown */}
+            {/* Sub Dropdown - Matching borderless style */}
             {isSubDropdownOpen && searchCategory && (
               <div className="absolute top-full left-0 w-full mt-1 bg-white/20 backdrop-blur-lg rounded-lg shadow-lg z-10 overflow-hidden">
-                {(searchCategory === 'Tags' ? tagsOptions : peopleOptions).map((option, index) => (
+                {(searchCategory === 'Tags' ? tagsOptions : peopleOptions).map((option,index) => (
                   <div
                     key={index}
                     onClick={() => handleOptionToggle(option)}
                     className="flex items-center px-4 py-3 text-white hover:bg-white/10 transition cursor-pointer"
                   >
                     <div
-                      className={`w-5 h-5 flex items-center justify-center mr-3 rounded ${
-                        selectedOptions.includes(option)
+                      className={`w-5 h-5 flex items-center justify-center mr-3 rounded ${selectedOptions.includes(option)
                           ? 'bg-yellow-400'
                           : 'border border-white'
-                      }`}
+                        }`}
                     >
                       {selectedOptions.includes(option) && (
                         <CheckIcon className="w-4 h-4 text-black" />
@@ -190,6 +193,7 @@ function Navbar({ onNavigate, currentPage }) {
                   </div>
                 ))}
 
+                {/* Apply Button */}
                 {selectedOptions.length > 0 && (
                   <div className="px-4 py-3 bg-white/10">
                     <button

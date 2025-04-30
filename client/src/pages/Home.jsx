@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+
+
 function Home() {
+
   const [memories, setMemories] = useState([]);
+
   const [searchParams, setSearchParams] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -49,6 +53,7 @@ function Home() {
       window.removeEventListener('memorySearchUpdated', handleStorageChange);
     };
   }, []);
+
 
   // Fetch all memories from the backend
   const fetchMemories = async () => {
@@ -118,6 +123,7 @@ function Home() {
     }
   };
 
+
   const getSortedMemoryGroups = () => {
     const groups = memories.reduce((acc, memory) => {
       const monthYear = new Date(memory.date).toLocaleString('default', { month: 'long', year: 'numeric' });
@@ -126,11 +132,16 @@ function Home() {
       return acc;
     }, {});
 
+
+    // Convert to array and sort by date (newest first)
+
     return Object.entries(groups)
       .map(([monthYear, memories]) => ({
         monthYear,
         memories: memories.sort((a, b) => new Date(b.date) - new Date(a.date)),
-        timestamp: new Date(memories[0].date)
+
+        timestamp: new Date(memories[0].date) // Use first memory's date for sorting groups
+
       }))
       .sort((a, b) => b.timestamp - a.timestamp);
   };
@@ -153,8 +164,12 @@ function Home() {
   return (
     <div className="relative w-full min-h-screen pt-10 flex flex-col items-center overflow-hidden">
       {/* Welcome Message */}
-      <div className="absolute top-0 w-full text-center bg-white/10 backdrop-blur-md border border-white/20 p-8 rounded-xl text-yellow-300 drop-shadow-md">
-        <h1 className="text-xl font-bold tracking-normal">Welcome to Memory Moments ✨</h1>
+
+      <div className="absolute top-0 w-full  text-center bg-white/10 backdrop-blur-md border border-white/20 p-8 rounded-xl text-yellow-300 drop-shadow-md">
+        <h1 className="text-xl font-bold tracking-normal ">
+          Welcome to Memory Moments ✨
+        </h1>
+
       </div>
 
       {/* Memories Grid */}

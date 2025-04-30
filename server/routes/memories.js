@@ -4,7 +4,7 @@ const cloudinary = require('../cloudinary');
 const db = require('../db');
 
 // Get all memories
-router.get('/',async (req,res) => {
+router.get('/:patient_id',async (req,res) => {
   try {
     const result = await db.query('SELECT * FROM memories ORDER BY memory_date DESC');
     res.json(result.rows);
@@ -95,60 +95,23 @@ router.post('/:patient_id/create',async (req,res) => {
 });
 
 
-router.get('/:patient_id/search',async (req,res) => {
+
+
+router.get('/:patient_id/favorites',async (req,res) => {
   const { patient_id } = req.params;
-  // Accept comma-separated values for multiple tags/people
-  const { tags,people } = req.query;
-
   try {
-    // Base query
-    let query = `
-      SELECT DISTINCT m.memory_id, m.title, m.descrip, m.memory_date
-      FROM memories m
-      WHERE m.patient_id = $1
-    `;
-    const params = [patient_id];
-    let paramIndex = 2;
-
-    // Process tags if provided
-    if (tags && !people) {
-      const tagArray = tags.split(',').map(tag => tag.trim());
-      query += `
-        AND EXISTS (
-          SELECT 1 FROM memorytags mt
-          JOIN tags t ON mt.tag_id = t.tag_id
-          WHERE mt.memory_id = m.memory_id
-          AND t.name = ANY($${paramIndex})
-        )
-      `;
-      params.push(tagArray);
-      paramIndex++;
-    }
-    // Process people if provided
-    else if (people && !tags) {
-      const peopleArray = people.split(',').map(p => p.trim());
-      query += `
-        AND EXISTS (
-          SELECT 1 FROM memorypeople mp
-          JOIN people p ON mp.person_id = p.person_id
-          WHERE mp.memory_id = m.memory_id
-          AND p.name = ANY($${paramIndex})
-        )
-      `;
-      params.push(peopleArray);
-    }
-    // Error if both provided
-    else if (tags && people) {
-      return res.status(400).json({
-        error: "Please filter by either tags OR people, not both"
-      });
-    }
-
-    query += ` ORDER BY m.memory_date DESC`;
-
-    const result = await db.query(query,params);
+    const result = await db.query('SELECT * FROM memories WHERE patient_id = $1 AND favorite = true ORDER BY memory_date DESC', [patient_id]);
     res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
+router.patch('/:patient_id/toggle-favorite/:memory_id',async (req,res) => {
+  const { patient_id,memory_id } = req.params;
+  try {
+    const result = await db.query('UPDATE memories SET favorite = NOT favorite WHERE memory_id = $1 AND patient_id = $2 RETURNING *', [memory_id,patient_id]);
+    res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
