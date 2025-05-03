@@ -12,7 +12,7 @@ function TransitionAnimation() {
     // Create shooting stars
     const stars = [];
     const createStar = () => {
-      const angle = Math.random() * Math.PI;
+      const angle = (135/180) * Math.PI;
       const length = Math.random() * 150 + 100;
       const speed = Math.random() * 5 + 10;
       

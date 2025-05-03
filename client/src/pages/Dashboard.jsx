@@ -1,135 +1,70 @@
-import { useState, useEffect } from 'react';
+import { useState,useEffect } from 'react';
 import MemoryCard from '../components/MemoryCard';
+import ViewMemories from './ViewMemories';
+import MemoryPopup from '../components/MemoryPopup';
 
-// Import ViewMemories component
-function ViewMemories() {
-  return (
-    <div className="flex flex-col items-center w-full pt-10">
-      {/* Title moved to the top */}
-      <h2 className="text-6xl font-extrabold text-yellow-300 mb-8 mt-10">Your Favorites</h2>
+function Dashboard({ onNavigate }) {
+  const [userName,setUserName] = useState('Guest');
+  const [recentMemories,setRecentMemories] = useState([]);
+  const [stats,setStats] = useState({ total: 0,favorites: 0 });
+  const [loading,setLoading] = useState(true);
+  const [error,setError] = useState(null);
+  const [showViewMemories,setShowViewMemories] = useState(false);
+  // Add state for popup
+  const [selectedMemory,setSelectedMemory] = useState(null);
+  const [isPopupOpen,setIsPopupOpen] = useState(false);
 
-      {/* Curved string */}
-      <svg height="80" width="100%" className="-mb-12">
-        <path
-          d="M 0 50 Q 50% 0 100% 50"
-          stroke="white"
-          strokeWidth="4"
-          fill="transparent"
-        />
-      </svg>
-
-      {/* Memory cards grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-6">
-        {dummyMemories.map((memory, idx) => (
-          <div
-            key={idx}
-            className="flex flex-col items-center bg-[#fef1b0] p-4 rounded-xl shadow-lg border border-white/40"
-          >
-            {/* Polaroid-style memory image */}
-            <div className="relative mb-4 w-[180px] h-[220px] border-2 border-white rounded-lg overflow-hidden bg-white/40">
-              <img
-                src={memory.image}
-                alt={memory.title}
-                className="w-full h-full object-cover"
-              />
-            </div>
-
-            {/* Title and date */}
-            <div className="text-center">
-              <h3 className="text-lg font-semibold text-yellow-500 mb-2">{memory.title}</h3> {/* Stronger yellow */}
-              <p className="text-xs text-gray-600">{new Date(memory.date).toLocaleDateString()}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// Dummy data to simulate user-added memories
-const dummyMemories = [
-  {
-    title: 'Beach',
-    image: 'https://source.unsplash.com/300x400/?beach',
-    date: '2025-04-01',
-  },
-  {
-    title: 'Sunset',
-    image: 'https://source.unsplash.com/300x400/?sunset',
-    date: '2025-04-02',
-  },
-  {
-    title: 'Picnic',
-    image: 'https://source.unsplash.com/300x400/?picnic',
-    date: '2025-04-05',
-  },
-  {
-    title: 'Forest',
-    image: 'https://source.unsplash.com/300x400/?forest',
-    date: '2025-04-10',
-  },
-  {
-    title: 'Mountains',
-    image: 'https://source.unsplash.com/300x400/?mountain',
-    date: '2025-04-12',
-  },
-];
-
-function Dashboard() {
-  const [userName, setUserName] = useState('Guest');
-  const [favoriteMemories, setFavoriteMemories] = useState([]);
-  const [stats, setStats] = useState({ total: 0, favorites: 0 });
-
-  const [showViewMemories, setShowViewMemories] = useState(false);
-  
-
-  // Dummy favorite memories data
-  const dummyFavorites = [
-    {
-      id: 1,
-      title: 'Beach',
-      image: 'https://source.unsplash.com/300x400/?beach',
-      date: '2025-04-01',
-    },
-    {
-      id: 2,
-      title: 'Sunset',
-      image: 'https://source.unsplash.com/300x400/?sunset',
-      date: '2025-04-02',
-    },
-    {
-      id: 3,
-      title: 'Picnic',
-      image: 'https://source.unsplash.com/300x400/?picnic',
-      date: '2025-04-05',
-    },
-  ];
+  const fetchTotalMemoryCount = async (patientId) => {
+    try {
+      const response = await fetch(`http://localhost:5000/${patientId}/memory-count`);
+      if (!response.ok) throw new Error('Failed to fetch memory count');
+      const data = await response.json();
+      return data.total_memories;
+    } catch (err) {
+      console.error('Error fetching memory count:',err);
+      return 0;
+    }
+  };
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       const user = JSON.parse(storedUser);
-      setUserName(user.name);
+      const name = user.full_name.split(' ')[0]; // Get first name
+      setUserName(name);
+      fetchRecentMemories(user.patient_id);
+      fetchTotalMemoryCount(user.patient_id).then(total => {
+        setStats(prev => ({ ...prev,total }));
+      });
     }
+  },[]);
 
-    // Set initial favorite memories
-    setFavoriteMemories(dummyFavorites);
-    
-    // Initialize stats
-    setStats({
-      total: 0,
-      favorites: 0
-    });
-  }, []);
-
-  // Handle navigation to add memory page (to be implemented)
-  const handleAddMemory = () => {
-    // This will be connected to navigation to the add memory page
-    console.log("Navigate to add memory page");
-    // No state changes here
+  const fetchRecentMemories = async (patientId) => {
+    try {
+      setLoading(true);
+      const response = await fetch(`http://localhost:5000/memories/recent/${patientId}`);
+      if (!response.ok) throw new Error('Failed to fetch recent memories');
+      const data = await response.json();
+      setRecentMemories(data);
+      // Update only favorites count
+      setStats(prev => ({
+        ...prev,
+        favorites: data.filter(memory => memory.favorite).length
+      }));
+    } catch (err) {
+      console.error('Error fetching recent memories:',err);
+      setError('Failed to load recent memories');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Handle clicking on favorites stats to show ViewMemories
+  // Handle navigation to add memory page
+  const handleAddMemory = () => {
+    window.location.href = '/#addMemory';
+  };
+
+  // Handle viewing all memories
   const handleViewFavorites = () => {
     setShowViewMemories(true);
   };
@@ -139,13 +74,30 @@ function Dashboard() {
     setShowViewMemories(false);
   };
 
-  // If ViewMemories is active, show that component with a back button
+  const handleOpenMemory = async (memory) => {
+    try {
+      const response = await fetch(`http://localhost:5000/memories/${memory.patient_id}/memory/${memory.memory_id}`);
+      if (!response.ok) throw new Error('Failed to fetch memory details');
+
+      const detailedMemory = await response.json();
+      setSelectedMemory(detailedMemory);
+      setIsPopupOpen(true);
+    } catch (err) {
+      console.error('Error fetching memory details:',err);
+    }
+  };
+
+  const handleClosePopup = () => {
+    setSelectedMemory(null);
+    setIsPopupOpen(false);
+  };
+
   if (showViewMemories) {
     return (
       <div>
         <button
           onClick={handleBackToDashboard}
-          className="mb-4 px-4 py-2 bg-yellow-600/30 hover:bg-yellow-600/50 border border-yellow-500 rounded-lg"
+          className="mb-4 px-4 py-2 mt-10 bg-yellow-600/30 hover:bg-yellow-600/50 border border-yellow-500 rounded-lg"
         >
           Back to Dashboard
         </button>
@@ -154,58 +106,65 @@ function Dashboard() {
     );
   }
 
-  // Otherwise show the Dashboard
   return (
     <div className="max-w-5xl mx-auto">
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-yellow-300 mb-2">Welcome back, {userName}</h1>
+        <h1 className="text-4xl font-bold text-yellow-300 mb-2 mt-5">Welcome back, {userName}</h1>
         <p className="text-lg text-gray-300">Your memory journey continues today</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-        <div className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-xl text-center">
+        <div
+          className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-xl text-center cursor-pointer hover:bg-white/20"
+          onClick={() => onNavigate('home')}
+        >
           <h3 className="text-2xl font-semibold mb-2">{stats.total}</h3>
           <p className="text-gray-300">Total Memories</p>
         </div>
-        <div 
+        <div
           className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-xl text-center cursor-pointer hover:bg-white/20"
           onClick={handleViewFavorites}
         >
-
           <h3 className="text-2xl font-semibold mb-2">{stats.favorites}</h3>
-          <p className="text-gray-300">Favorite Memories</p>
+          <p className="text-gray-300">Recent Memories</p>
         </div>
       </div>
 
       <h2 className="text-2xl font-bold text-yellow-300 mb-6">Recent Memories</h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
-        {favoriteMemories.length === 0 ? (
-          <p className="text-gray-300">No favorite memories yet!</p>
-        ) : (
-          favoriteMemories.map(memory => (
-            <div
-              key={memory.id}
-              className="flex flex-col items-center bg-[#fef1b0] p-4 rounded-xl shadow-lg border border-white/40"
-            >
-              {/* Polaroid-style memory image */}
-              <div className="relative mb-4 w-full h-48 border-2 border-white rounded-lg overflow-hidden bg-white/40">
-                <img
-                  src={memory.image}
-                  alt={memory.title}
-                  className="w-full h-full object-cover"
-                />
+      {loading ? (
+        <div className="text-center text-gray-300">Loading recent memories...</div>
+      ) : error ? (
+        <div className="text-center text-red-400">{error}</div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+          {recentMemories.length === 0 ? (
+            <p className="text-gray-300">No recent memories found!</p>
+          ) : (
+            recentMemories.map(memory => (
+              <div
+                key={memory.memory_id}
+                className="flex flex-col items-center bg-[#fef1b0] p-4 rounded-xl h-full shadow-lg border border-white/40 cursor-pointer"
+                onClick={() => handleOpenMemory(memory)}
+              >
+                <div className="relative mb-4 w-full h-60 border-2 border-white rounded-lg overflow-hidden bg-white/40">
+                  <img
+                    src={memory.image_url || 'https://source.unsplash.com/300x400/?memory'}
+                    alt={memory.title}
+                    className="w-full h-full object-cover "
+                   
+                  />
+                </div>
+                <div className="text-center">
+                  <h3 className="text-lg font-semibold text-orange-500 mb-2">{memory.title}</h3>
+                  <p className="text-xs text-gray-500 mt-1">Added: {new Date(memory.created_time).toLocaleString()}</p>
+                </div>
               </div>
+            ))
+          )}
+        </div>
+      )}
 
-              {/* Title and date */}
-              <div className="text-center">
-                <h3 className="text-lg font-semibold text-yellow-500 mb-2">{memory.title}</h3>
-                <p className="text-xs text-gray-600">{new Date(memory.date).toLocaleDateString()}</p>
-              </div>
-            </div>
-          ))
-        )}
-      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-xl">
           <h2 className="text-xl font-bold text-yellow-300 mb-4">Quick Actions</h2>
@@ -217,28 +176,21 @@ function Dashboard() {
               <div className="text-lg font-semibold mb-1">Add Memory</div>
               <p className="text-xs text-gray-300">Record a new memory</p>
             </button>
-            <button 
+            <button
               className="bg-yellow-600/30 hover:bg-yellow-600/50 border border-yellow-500 p-4 rounded-lg text-left"
               onClick={handleViewFavorites}
             >
-              <div className="text-lg font-semibold mb-1">View All</div>
+              <div className="text-lg font-semibold mb-1">View Favorites</div>
               <p className="text-xs text-gray-300">See your memory collection</p>
-            </button>
-            <button className="bg-yellow-600/30 hover:bg-yellow-600/50 border border-yellow-500 p-4 rounded-lg text-left">
-              <div className="text-lg font-semibold mb-1">Memory Test</div>
-              <p className="text-xs text-gray-300">Test your recall</p>
-            </button>
-            <button className="bg-white/10 hover:bg-white-600/50 border border-white-500 p-4 rounded-lg text-left">
-              <div className="text-lg font-semibold mb-1">Daily Reminder</div>
-              <p className="text-xs text-gray-300">Set memory prompts</p>
             </button>
           </div>
         </div>
+
         <div className="bg-white/10 backdrop-blur-md border border-white/20 p-6 rounded-xl">
           <h2 className="text-xl font-bold text-yellow-300 mb-4">Memory Calendar</h2>
           <div className="text-center p-6">
             <p className="text-3xl font-bold">{new Date().getDate()}</p>
-            <p className="text-lg">{new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</p>
+            <p className="text-lg">{new Date().toLocaleDateString('en-US',{ month: 'long',year: 'numeric' })}</p>
             <div className="mt-4 text-sm text-gray-300">
               <p>Today's memory prompt:</p>
               <p className="italic mt-2">"What was your favorite childhood toy?"</p>
@@ -246,6 +198,13 @@ function Dashboard() {
           </div>
         </div>
       </div>
+
+      {/* Add MemoryPopup */}
+      <MemoryPopup
+        memory={selectedMemory}
+        isOpen={isPopupOpen}
+        onClose={handleClosePopup}
+      />
     </div>
   );
 }

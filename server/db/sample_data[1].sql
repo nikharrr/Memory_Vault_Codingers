@@ -1,460 +1,155 @@
--- Inserting sample data for 10 patients, including older patients
-INSERT INTO patients (full_name, birth_date) VALUES
-('Aarav Patel', '1985-07-14'),
-('Isha Sharma', '1990-11-25'),
-('Arjun Reddy', '1978-03-02'),
-('Priya Kapoor', '2000-06-30'),
-('Vikram Singh', '1995-02-22'),
-('Ananya Desai', '1988-09-15'),
-('Ravi Kumar', '1992-01-09'),
--- ('Sanya Gupta', '2001-12-05'),
--- ('Manoj Verma', '1980-04-20'),
--- ('Neha Mehta', '1993-08-12'),
--- ('Suresh Bhatt', '1945-05-21'),   
--- ('Geeta Iyer', '1952-08-14'),      
--- ('Rajesh Choudhury', '1958-12-01'), 
--- ('Meera Nair', '1947-09-11');   
+INSERT INTO patients (full_name, email, password, birth_date)
+VALUES 
+('Savitri Deshmukh', 'savitri.deshmukh@example.com', 'savitri789', '1952-11-05'),
+('Harish Patel', 'harish.patel@example.com', 'harish321', '1947-06-18');
 
 
--- For Aarav Patel (Assuming patient_id = 1)
-INSERT INTO People (name, relationship, patient_id) VALUES
-('Riya Patel', 'Daughter', 1),
-('Sunita Patel', 'Wife', 1),
-('Mahesh Patel', 'Brother', 1),
-('Kiran Patel', 'Sister-in-law', 1),
-('Amit Sharma', 'Friend', 1),
-('Pooja Verma', 'Friend', 1),
-('Nitin Deshmukh', 'Colleague', 1),
-('Bhavna Joshi', 'Neighbor', 1),
-('Deepak Patel', 'Father', 1),
-('Meena Patel', 'Mother', 1);
+INSERT INTO people (name, patient_id, relationship, image_url, favorite)
+VALUES
+('Vikram Joshi', 1, 'Son', 'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746100054/Screenshot_2025-04-30_230134_dncvlf.png', TRUE),
+('Meena Rane', 1, 'Daughter-in-law', 'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746100060/Screenshot_2025-04-30_225311_lgkme5.png', FALSE),
+('Anita Sehgal', 1, 'Daughter', 'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746100058/Screenshot_2025-04-30_224627_ivjore.png', TRUE),
+('Amit Banerjee', 1, 'Grandson', 'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746102138/Screenshot_2025-05-01_175202_hfraha.png', FALSE),
+('Naina Kapoor', 1, 'Granddaughter', 'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746100049/Screenshot_2025-04-30_225417_mciv8d.png', TRUE),
+('Radha Pawar', 1, 'Younger Sister', 'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746100048/Screenshot_2025-04-30_225549_f6yvh2.png', TRUE),
+('Suresh Nair', 1, 'Elder Brother', 'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746100046/Screenshot_2025-04-30_225812_cspmng.png', FALSE),
+('Dr. Shalini Verma', 1, 'Family Doctor', 'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746100044/Screenshot_2025-04-30_224731_vsw76u.png', TRUE),
+('Maya Thomas', 1, 'Childhood Friend', 'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746100042/Screenshot_2025-04-30_224854_eoimiq.png', TRUE),
+('Usha Banerjee', 1, 'Spiritual Guide', 'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746100040/Screenshot_2025-04-30_230046_jakh5g.png', TRUE),
+('Kavita Kulkarni', 1, 'Old College Friend', 'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746100038/Screenshot_2025-04-30_224824_lglqzx.png', FALSE),
+('Deepak Rawat', 1, 'Family Friend', 'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746100036/Screenshot_2025-04-30_224700_ltu9ym.png', FALSE),
+('Sunita Fernandes', 1, 'Retired Colleague', 'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746100035/Screenshot_2025-04-30_225738_xv76ni.png', FALSE),
+('Ramesh Saxena', 1, 'Friend from Temple Group', 'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746100437/Screenshot_2025-05-01_172328_qkuub9.png', FALSE),
+('Ajit Menon', 1, 'Cousin', 'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746100033/Screenshot_2025-04-30_224205_nfwtdr.png', FALSE);
 
--- For Isha Sharma (Assuming patient_id = 2)
-INSERT INTO People (name, relationship, patient_id) VALUES
-('Rahul Sharma', 'Brother', 2),
-('Sneha Sharma', 'Sister', 2),
-('Vikas Sharma', 'Father', 2),
-('Kavita Sharma', 'Mother', 2),
-('Rohan Mehta', 'Friend', 2),
-('Sonal Gupta', 'Colleague', 2),
-('Priyanka Iyer', 'Friend', 2),
-('Aditya Reddy', 'Cousin', 2),
-('Manish Sharma', 'Uncle', 2),
-('Aarti Sharma', 'Aunt', 2);
+INSERT INTO Memories (
+    patient_id,
+    title,
+    descrip,
+    image_url,
+    memory_date,
+    favorite
+)
+VALUES 
+(1, 'Holi at Vikram''s House', 
+    'The courtyard burst with colors as little Amit and Naina ran around shrieking with joy. Vikram applied a soft smear of pink on my cheek and said, "Happy Holi, Aai." I remember the sweet aroma of gujiyas and the sound of the dhol echoing through the lane. My white saree, once crisp, was now a canvas of laughter, love, and celebration. Even the sky seemed to join us in joy, showering golden sunlight over our cheerful chaos.',
+    'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746108347/Screenshot_2025-05-01_193527_gf0tfg.png',
+    '2024-03-25',
+    TRUE
+),
 
--- For Arjun Reddy (Assuming patient_id = 3)
-INSERT INTO People (name, relationship, patient_id) VALUES
-('Pallavi Reddy', 'Wife', 3),
-('Karthik Reddy', 'Son', 3),
-('Meena Reddy', 'Daughter', 3),
-('Suresh Reddy', 'Brother', 3),
-('Lakshmi Reddy', 'Sister-in-law', 3),
-('Ramesh Gupta', 'Friend', 3),
-('Anil Sharma', 'Colleague', 3),
-('Jyoti Iyer', 'Friend', 3),
-('Satish Verma', 'Neighbor', 3),
-('Nirmala Reddy', 'Mother', 3);
+(1, 'Morning Walks with Radha', 
+    'Every morning that March, Radha and I walked through the gulmohar-lined paths. We talked about our childhood in Satara, reliving those tiny joys hidden in forgotten corners of memory. The cool breeze would carry the fragrance of wet earth and blooming champa, and our footsteps created a rhythm only old friends could understand. Sometimes, we''d sit on the park bench in silence, watching squirrels chase each other, wrapped in the comfort of shared silence and sunshine.',
+    'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746108479/123706200-portrait-of-a-elderly-asian-woman-with-young-women-walking-outdoor-together-in-the-morning-happy-and_peeeg5.jpg',
+    '2024-03-10',
+    TRUE
+),
 
--- For Priya Kapoor (Assuming patient_id = 4)
-INSERT INTO People (name, relationship, patient_id) VALUES
-('Nikhil Kapoor', 'Brother', 4),
-('Anjali Kapoor', 'Sister', 4),
-('Rakesh Kapoor', 'Father', 4),
-('Savita Kapoor', 'Mother', 4),
-('Tanvi Deshmukh', 'Friend', 4),
-('Krishna Joshi', 'Friend', 4),
-('Vishal Mehta', 'Colleague', 4),
-('Divya Patel', 'Colleague', 4),
-('Harshit Kapoor', 'Cousin', 4),
-('Namita Kapoor', 'Aunt', 4);
+(1, 'Temple Fair with Naina', 
+    'Naina held my hand as we laughed like young girls again, bargaining at stalls and eating piping hot batata vadas. The fair was crowded, but my heart felt light. The scent of incense and roasted corn filled the air as temple bells chimed softly in the distance. We tried on glass bangles that clinked with every move and shared a kulfi that dripped faster than we could eat. That day, amidst the lights and sounds, I felt the pulse of life again—joyful, chaotic, and beautifully alive.',
+    'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746108795/Screenshot_2025-05-01_194301_x4eana.png',
+    '2024-03-17',
+    TRUE
+);
 
--- For Vikram Singh (Assuming patient_id = 5)
-INSERT INTO People (name, relationship, patient_id) VALUES
-('Rohit Singh', 'Brother', 5),
-('Kajal Singh', 'Sister', 5),
-('Baldev Singh', 'Father', 5),
-('Kamla Singh', 'Mother', 5),
-('Simran Kaur', 'Friend', 5),
-('Armaan Gill', 'Friend', 5),
-('Rajiv Sharma', 'Colleague', 5),
-('Preeti Verma', 'Colleague', 5),
-('Gagan Singh', 'Cousin', 5),
-('Harpreet Kaur', 'Cousin', 5);
+INSERT INTO Memories (patient_id, title, descrip, image_url, memory_date, favorite)
+VALUES
+(1, 'Vikram''s First School Day', 'The crisp morning air carried the scent of new books and polished shoes as I held Vikram''s small, sweaty hand. His oversized backpack bounced with each nervous step. When the school bell rang, he turned with those big Joshi-family eyes - just like his grandfather''s - and gave me a brave smile before joining the other children in their blue uniforms.', 'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746097539/Screenshot_2025-04-30_231511_akvxfw.png', '1983-06-15', TRUE),
+(1, 'Meena''s First Puran Poli', 'The kitchen filled with the caramel aroma of melting jaggery as Meena carefully flipped the golden poli on the tava. Vikram hovered like a hungry puppy, earning playful swats with her spatula. "Wait for Amma!" she chided, but still sneaked him a piece. The sweet, ghee-soaked bread stuck to our fingers as we ate, laughing at Vikram''s dramatic chewing.', 'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746097611/Screenshot_2025-04-30_231615_dlcy9x.png', '2012-04-22', TRUE),
+(1, 'Anita''s College Graduation', 'The marigold garland around Anita''s neck released bursts of citrusy fragrance each time she moved. When her name echoed in the auditorium, she glanced back at me - that same proud look she had when winning childhood races. Her graduation cap slipped sideways as she hugged me, whispering "Your sacrifices made this possible" into my shoulder.', 'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746097680/Screenshot_2025-04-30_231719_bgv4rl.png', '2003-03-15', TRUE),
+(1, 'Amit''s Krishna Natyam', 'The stage lights made Amit''s peacock-feather crown glow blue as he twirled, his bells jingling wildly. When he pretended to steal butter from the "gopis," his exaggerated wink to the audience sent ripples of laughter through the hall. Afterward, his sticky, makeup-smeared cheeks pressed against mine as he demanded, "Did I look like real Krishna, Ajji?"', 'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746098160/Screenshot_2025-04-30_231819_jhusat.png', '2010-01-26', TRUE),
+(1, 'Naina''s Sparkly Birthday', 'Pink frosting smudged Naina''s nose as she blew out the candles with all the dramatic breath her 10-year-old lungs could muster. The living room shimmered with fallen glitter from her dress, sticking to our hands as we clapped. Amit "helped" unwrap gifts, his own face lighting up with each of her delighted squeals.', 'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746099184/Screenshot_2025-04-30_231931_z1qnae.png', '2015-07-14', TRUE),
+(1, 'Radha''s Rakhi Ritual', 'Radha''s arthritic fingers struggled with the silk thread until I covered her hands with mine, just as I did when we were girls. The coconut-and-jaggery prasad tasted exactly like Amma used to make. "Remember how we''d fight over who got the bigger ladoo?" she chuckled, her silver bangles clinking against my wrist.', 'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746099606/Screenshot_2025-04-30_232108_1_mbuwpf.png', '2005-08-19', TRUE),
+(1, 'Suresh''s Winter Visit', 'Frost decorated the windowpanes as Suresh burst in, his wool coat smelling of Delhi winters and the jalebi syrup leaking through the box. "The shopkeeper remembered you like them extra crispy," he grinned, feeding me a piece like we were children again. His stories of our childhood mischief warmed the room better than the heater.', 'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746099650/Screenshot_2025-04-30_232232_nloni6.png', '2002-12-01', TRUE),
+(1, 'Dr. Shalini''s Reassurance', 'The antiseptic smell of the clinic faded when Dr. Shalini took my hands in hers, her gold bangles cool against my skin. "Your strength flows through your family," she said, placing my palm over my heart. The lavender oil she dabbed on my wrists became my armor against fear.', 'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746099813/Screenshot_2025-04-30_232347_h4f9pw.png', '2018-09-22', TRUE),
+(1, 'Maya''s Veranda Stories', 'Maya''s veranda swing creaked rhythmically as we shared a single shawl. The cardamom from our chai mingled with the jasmine climbing her trellis. When she imitated Sister Agnes''s strict voice, our laughter startled the mynah birds into flight - just like it had fifty years ago in the schoolyard.', 'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746099859/Screenshot_2025-04-30_232507_gfmawp.png', '2011-05-04', TRUE),
+(1, 'Usha''s Bhajan Circle', 'The harmonium wheezed as Usha''s voice rose above ours in "Vaishnav Janato." Incense smoke curled around her face like a blessing. My dholak''s rhythm faltered when tears came, but her steady nod said, "Keep going." The temple bells marked time as our voices blended into something holy.', 'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746099923/Screenshot_2025-04-30_232625_bgmrsu.png', '2013-11-14', TRUE),
+(1, 'Kavita''s College Canteen', 'The steel tumbler of filter coffee burned my fingers as Kavita and I argued over whose turn it was to pay. The canteen''s permanent smell of sambar and notebook paper transported us back to debating poetry instead of grandchildren. Her signature rose-scented hair oil still lingered when we hugged goodbye.', 'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746099984/Screenshot_2025-04-30_232734_zpepfd.png', '1969-09-20', TRUE),
+(1, 'Deepak''s Poetry Evening', 'Deepak''s voice cracked on the line about "mothers becoming grandmothers." In the audience, I smoothed Amit''s hair as he slept against my shoulder, his weight familiar and precious. The handwritten dedication in Deepak''s book read: "For Savitri-ji, who taught me love has no meter."', 'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746100038/Screenshot_2025-04-30_233039_wepexq.png', '2016-03-10', TRUE),
+(1, 'Sunita''s Farewell Speech', 'Sunita''s white sari glowed under the auditorium lights as she described her first day teaching us. When she mentioned how I''d brought her lime pickle sandwiches during her pregnancy, the room erupted in knowing laughter. Thirty years of chalk dust and shared dreams hung in that applause.', 'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746102001/Screenshot_2025-04-30_233237_duwbnz.png', '2005-03-30', TRUE),
+(1, 'Gudi Padwa with Ramesh', 'The neem leaves crunched underfoot as Ramesh helped me hang the gudi. His off-key singing of "Jai Devi Durge" made me laugh until the turmeric-and-vermilion mixture dripped down our hands. The morning sun through the temple arches painted everything in hopeful gold.', 'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746100141/Screenshot_2025-05-01_091820_p8kztc.png', '2014-03-31', TRUE),
+(1, 'Ajit''s New Home', 'Ajit''s balcony overlooked the exact Pune hill where we''d raced as children. The modaks steamed in coconut leaves, their sweet filling reminding me of our aunt''s kitchen. "This window is for you to watch the rains," he said, knowing monsoon watching was our shared joy.', 'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746104043/Screenshot_2025-05-01_091943_2_yxxzq4.png', '2007-01-20', TRUE),
+(1, 'Carrom Championship', 'Amit''s triumphant whoop echoed when he sunk the last piece, while Naina pouted dramatically. "Ajji let us win!" she accused, though we all saw her secretly coaching him. The wooden striker''s smooth weight in my palm felt like generations passing the game forward.', 'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746103319/gettyimages-649878646-640x640_hrubsk.jpg', '2018-06-01', TRUE),
+(1, 'Thai Curry Lessons', 'Meena''s hands guided mine as we crushed lemongrass, its citrusy scent cutting through the coconut milk. Anita''s laughter rang out when I accidentally used green chilies instead of bell peppers. The resulting tears and shared water glasses became our favorite part of the recipe.', 'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746102299/OIP_armcgq.jpg', '2017-09-18', TRUE),
+(1, 'Sibling Rakhi Circle', 'Suresh pretended to protest as Radha tied the rakhi, just like when we were young. His exaggerated winks at me during the puja mirrored our childhood conspiracy against chores. The shared memory of Amma''s proud smile hung unspoken between us three.', 'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746100667/Screenshot_2025-05-01_092419_ikdfdv.png', '2010-08-24', TRUE),
+(1, 'Naina''s Bharatanatyam', 'Naina''s ankle bells created a storm of sound as she spun, her expression transforming into the goddess she portrayed. When her eyes met mine during the final pose, I saw my mother''s passion alive in her. The jasmine in her hair scented my saree long after we hugged.', 'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746100694/Screenshot_2025-05-01_092522_udklrc.png', '2013-09-14', TRUE),
+(1, 'Diwali Together', 'Vikram''s steady hands guided Amit''s while lighting diyas. Meena adjusted Naina''s lehenga with the same care she''d shown for Vikram''s school uniform years ago. As fireworks painted the sky, Anita squeezed my shoulder - our silent tradition since her first Diwali away from home.', 'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746100699/Screenshot_2025-05-01_092613_xwamlu.png', '2020-11-13', TRUE);
 
--- For Ananya Desai (Assuming patient_id = 6)
-INSERT INTO People (name, relationship, patient_id) VALUES
-('Neeraj Desai', 'Brother', 6),
-('Sheetal Desai', 'Sister', 6),
-('Vinod Desai', 'Father', 6),
-('Radha Desai', 'Mother', 6),
-('Siddharth Patel', 'Friend', 6),
-('Mona Shah', 'Friend', 6),
-('Harsh Iyer', 'Colleague', 6),
-('Asmita Rao', 'Colleague', 6),
-('Chirag Desai', 'Uncle', 6),
-('Uma Desai', 'Aunt', 6);
+INSERT INTO Memories (patient_id, title, descrip, image_url, memory_date, favorite)
+VALUES 
+(1, 'Naina''s School Play  “The Freedom Song”', 
+'Naina''s shy smile from the stage in her tricolor saree is etched in my memory. Her lines about freedom stirred something deep in me.', 
+'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746109886/Screenshot_2025-05-01_200113_jqwfkr.png', '2024-08-14', TRUE),
 
--- For Ravi Kumar (Assuming patient_id = 7)
-INSERT INTO People (name, relationship, patient_id) VALUES
-('Puneet Kumar', 'Brother', 7),
-('Kritika Kumar', 'Sister', 7),
-('Suraj Kumar', 'Father', 7),
-('Seema Kumar', 'Mother', 7),
-('Dhruv Sharma', 'Friend', 7),
-('Megha Gupta', 'Friend', 7),
-('Rajesh Deshmukh', 'Colleague', 7),
-('Pallavi Iyer', 'Colleague', 7),
-('Nilesh Kumar', 'Cousin', 7),
-('Shalini Kumar', 'Cousin', 7);
-
--- For Sanya Gupta (Assuming patient_id = 8)
--- INSERT INTO People (name, relationship, patient_id) VALUES
--- ('Karan Gupta', 'Brother', 8),
--- ('Naina Gupta', 'Sister', 8),
--- ('Manoj Gupta', 'Father', 8),
--- ('Kusum Gupta', 'Mother', 8),
--- ('Yash Mehta', 'Friend', 8),
--- ('Anushka Shah', 'Friend', 8),
--- ('Jayant Joshi', 'Colleague', 8),
--- ('Ritika Sharma', 'Colleague', 8),
--- ('Aayush Gupta', 'Cousin', 8),
--- ('Pinky Gupta', 'Cousin', 8);
-
--- -- For Manoj Verma (Assuming patient_id = 9)
--- INSERT INTO People (name, relationship, patient_id) VALUES
--- ('Alok Verma', 'Brother', 9),
--- ('Pallavi Verma', 'Sister', 9),
--- ('Devendra Verma', 'Father', 9),
--- ('Sarita Verma', 'Mother', 9),
--- ('Vipul Sharma', 'Friend', 9),
--- ('Shraddha Iyer', 'Friend', 9),
--- ('Sandeep Patel', 'Colleague', 9),
--- ('Neha Desai', 'Colleague', 9),
--- ('Prateek Verma', 'Cousin', 9),
--- ('Anita Verma', 'Cousin', 9);
-
--- -- For Neha Mehta (Assuming patient_id = 10)
--- INSERT INTO People (name, relationship, patient_id) VALUES
--- ('Rohan Mehta', 'Brother', 10),
--- ('Priya Mehta', 'Sister', 10),
--- ('Shyam Mehta', 'Father', 10),
--- ('Leena Mehta', 'Mother', 10),
--- ('Kabir Deshmukh', 'Friend', 10),
--- ('Ishita Sharma', 'Friend', 10),
--- ('Varun Patel', 'Colleague', 10),
--- ('Snehal Gupta', 'Colleague', 10),
--- ('Mayank Mehta', 'Cousin', 10),
--- ('Asha Mehta', 'Aunt', 10);
-
--- -- For Suresh Bhatt (Assuming patient_id = 11)
--- INSERT INTO People (name, relationship, patient_id) VALUES
--- ('Narayan Bhatt', 'Brother', 11),
--- ('Kamala Bhatt', 'Sister', 11),
--- ('Ganesh Bhatt', 'Son', 11),
--- ('Uma Bhatt', 'Daughter-in-law', 11),
--- ('Siddhi Bhatt', 'Granddaughter', 11),
--- ('Aryan Bhatt', 'Grandson', 11),
--- ('Krishna Menon', 'Friend', 11),
--- ('Indira Bhatt', 'Wife', 11),
--- ('Dinesh Bhatt', 'Nephew', 11),
--- ('Sunita Bhatt', 'Niece', 11);
-
--- -- For Geeta Iyer (Assuming patient_id = 12)
--- INSERT INTO People (name, relationship, patient_id) VALUES
--- ('Suresh Iyer', 'Brother', 12),
--- ('Latha Iyer', 'Sister', 12),
--- ('Rahul Iyer', 'Son', 12),
--- ('Priya Iyer', 'Daughter-in-law', 12),
--- ('Riya Iyer', 'Granddaughter', 12),
--- ('Varun Iyer', 'Grandson', 12),
--- ('Meera Nair', 'Friend', 12),
--- ('Ravi Iyer', 'Husband', 12),
--- ('Vinod Iyer', 'Nephew', 12),
--- ('Rekha Iyer', 'Niece', 12);
-
--- -- For Rajesh Choudhury (Assuming patient_id = 13)
--- INSERT INTO People (name, relationship, patient_id) VALUES
--- ('Amit Choudhury', 'Son', 13),
--- ('Neha Choudhury', 'Daughter-in-law', 13),
--- ('Sahil Choudhury', 'Grandson', 13),
--- ('Poonam Choudhury', 'Granddaughter', 13),
--- ('Anup Choudhury', 'Brother', 13),
--- ('Divya Choudhury', 'Sister-in-law', 13),
--- ('Rajiv Mehta', 'Friend', 13),
--- ('Suman Choudhury', 'Wife', 13),
--- ('Harsh Choudhury', 'Nephew', 13),
--- ('Naina Choudhury', 'Niece', 13);
-
--- -- For Meera Nair (Assuming patient_id = 14)
--- INSERT INTO People (name, relationship, patient_id) VALUES
--- ('Vishal Nair', 'Son', 14),
--- ('Swati Nair', 'Daughter-in-law', 14),
--- ('Ananya Nair', 'Granddaughter', 14),
--- ('Rohan Nair', 'Grandson', 14),
--- ('Krishnan Nair', 'Brother', 14),
--- ('Sudha Nair', 'Sister', 14),
--- ('Arvind Menon', 'Friend', 14),
--- ('Padma Nair', 'Friend', 14),
--- ('Sandeep Nair', 'Nephew', 14),
--- ('Anjali Nair', 'Niece', 14);
+(1, 'Making Rakhi with Anita', 
+'Anita sat beside me tying rakhis with colorful threads and beads. We laughed as we recalled how Vikram used to cry every Raksha Bandhan over the tikka.', 
+'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746109973/Screenshot_2025-05-01_200241_dmcxfg.png', '2024-08-22', TRUE),
 
 
-
--- Tags for Alzheimer's memory archive
-INSERT INTO tags (name) VALUES
-('Family'),
-('Childhood'),
-('Spouse'),
-('Parent'),
-('Grandparent'),
-('Siblings'),
-('Home'),
-('Vacation'),
-('Favorite Place'),
-('Pets'),
-('Birthday'),
-('Wedding'),
-('Anniversary'),
-('Friends'),
-('Work'),
-('School'),
-('Religious Event'),
-('Holiday'),
-('Health'),
-('Music'),
-('Food');
+(1, 'Monsoon Tea with Meena', 
+'One rainy afternoon, Meena and I sipped ginger tea and shared stories of motherhood. The smell of wet earth and pakoras still lingers in my mind.', 
+'https://res.cloudinary.com/dxzq9uoh8/image/upload/v1746110060/Screenshot_2025-05-01_200406_tuea8o.png', '2024-08-11', TRUE);
 
 
-
--- Memories for Patients
-
-INSERT INTO Memories (patient_id, title, descrip, image_url, memory_date) VALUES
-
--- Memories for Aarav Patel (patient_id = 1)
-(1, 'Graduation Day', 'Completed engineering degree with honors.', 'images/patient_1_memory_1.jpg', '2007-05-10'),
-(1, 'Wedding Ceremony', 'Married Sunita surrounded by family.', 'images/patient_1_memory_2.jpg', '2010-12-20'),
---(1, 'First Job', 'Started first job at Infosys.', 'images/patient_1_memory_3.jpg', '2008-07-01'),
-(1, 'Trip to Manali', 'Adventurous trip with college friends.', 'images/patient_1_memory_4.jpg', '2009-09-15'),
--- (1, 'Bought First Car', 'Purchased a Maruti Suzuki.', 'images/patient_1_memory_5.jpg', '2012-03-18'),
-(1, 'Daughter’s Birth', 'Welcomed Riya into the world.', 'images/patient_1_memory_6.jpg', '2013-06-22'),
--- (1, 'Housewarming', 'Moved into our dream home.', 'images/patient_1_memory_7.jpg', '2014-11-05'),
--- (1, 'Family Picnic', 'Spent quality time at Lonavala.', 'images/patient_1_memory_8.jpg', '2015-08-10'),
--- (1, 'Promotion', 'Promoted to senior project manager.', 'images/patient_1_memory_9.jpg', '2017-04-14'),
-(1, 'Trip to Singapore', 'First international vacation.', 'images/patient_1_memory_10.jpg', '2018-02-26'),
-
--- Memories for Isha Sharma (patient_id = 2)
-(2, 'School Farewell', 'Last day with my childhood friends.', 'images/patient_2_memory_1.jpg', '2007-03-30'),
---(2, 'College Fest', 'Organized the annual college festival.', 'images/patient_2_memory_2.jpg', '2010-10-10'),
---(2, 'First Salary', 'Received my first paycheck.', 'images/patient_2_memory_3.jpg', '2011-07-01'),
---(2, 'Sibling’s Wedding', 'Rahul got married!', 'images/patient_2_memory_4.jpg', '2013-01-22'),
---(2, 'Trip to Goa', 'Fun-filled trip with friends.', 'images/patient_2_memory_5.jpg', '2014-12-15'),
-(2, 'Marathon Finish', 'Completed my first 10K marathon.', 'images/patient_2_memory_6.jpg', '2016-09-25'),
--- (2, 'New Apartment', 'Moved into my own place.', 'images/patient_2_memory_7.jpg', '2017-07-14'),
--- (2, 'Europe Tour', 'Visited Paris, Rome, and Amsterdam.', 'images/patient_2_memory_8.jpg', '2018-05-20'),
--- (2, 'Work Recognition', 'Awarded employee of the year.', 'images/patient_2_memory_9.jpg', '2019-11-18'),
--- (2, 'Nephew’s Birth', 'Welcomed little Aryan.', 'images/patient_2_memory_10.jpg', '2020-06-05'),
-
--- Memories for Arjun Reddy (patient_id = 3)
-(3, 'Medical College Admission', 'Dream came true.', 'images/patient_3_memory_1.jpg', '1996-07-01'),
-(3, 'Internship at Hospital', 'First patient interaction.', 'images/patient_3_memory_2.jpg', '1999-05-18'),
--- (3, 'Married Pallavi', 'Best day of my life.', 'images/patient_3_memory_3.jpg', '2001-02-10'),
--- (3, 'Son’s First Step', 'Karthik’s first steps.', 'images/patient_3_memory_4.jpg', '2003-06-10'),
--- (3, 'Family Vacation to Kashmir', 'Snowy adventures.', 'images/patient_3_memory_5.jpg', '2005-12-23'),
--- (3, 'Hospital Recognition', 'Best doctor award.', 'images/patient_3_memory_6.jpg', '2008-09-15'),
--- (3, 'Bought Our Own Clinic', 'Launched private practice.', 'images/patient_3_memory_7.jpg', '2010-03-20'),
--- (3, 'Parents’ Golden Jubilee', 'Celebrated 50 years of their marriage.', 'images/patient_3_memory_8.jpg', '2011-04-15'),
--- (3, 'Daughter’s Graduation', 'Meena graduated with distinction.', 'images/patient_3_memory_9.jpg', '2015-06-18'),
--- (3, 'Pilgrimage to Tirupati', 'Spiritual trip.', 'images/patient_3_memory_10.jpg', '2018-11-11'),
-
--- Similarly, you would repeat for patient_id = 4 to 14...
+INSERT INTO MemoryPeople (memory_id, person_id)
+VALUES
+(1, 1), -- Vikram's First School Day
+(2, 1), (2, 2), -- Family Lunch with Meena and Vikram
+(3, 3), -- Anita's College Farewell
+(4, 4), -- Amit's School Play
+(5, 5), -- Naina's 10th Birthday
+(6, 6), -- Rakhi with Radha
+(7, 7), -- Suresh's Family Visit
+(8, 8), -- Dr. Shalini Consultation
+(9, 9), -- Reunion with Maya
+(10, 10), -- Bhajans with Usha
+(11, 11), -- Coffee with Kavita
+(12, 12), -- Deepak's Poetry Recital
+(13, 13), -- Sunita's Farewell
+(14, 14), -- Temple Visit with Ramesh
+(15, 15), -- Ajit's Housewarming
+(16, 4), (16, 5), -- Game Night with Grandkids
+(17, 2), (17, 3), -- Cooking Day with Meena and Anita
+(18, 6), (18, 7), -- Rakhi with Siblings
+(19, 5), -- Naina's Dance Performance
+(20, 1), (20, 2), (20, 3), (20, 4), (20, 5); -- Diwali with Family
 
 
--- Priya Kapoor (4)
-(4, 'Childhood Dance Show', 'First stage performance.', 'images/patient_4_memory_1.jpg', '2007-12-20'),
-(4, 'School Science Fair', 'Won first prize for volcano model.', 'images/patient_4_memory_2.jpg', '2011-02-15'),
--- (4, 'College Freshers', 'Met my best friends.', 'images/patient_4_memory_3.jpg', '2018-08-01'),
--- (4, 'Trip to Jaipur', 'Explored the pink city.', 'images/patient_4_memory_4.jpg', '2019-11-15'),
--- (4, 'Internship in Bangalore', 'Learned so much in 3 months.', 'images/patient_4_memory_5.jpg', '2020-04-10'),
--- (4, 'Graduated B.Com', 'Proud moment for family.', 'images/patient_4_memory_6.jpg', '2022-05-25'),
--- (4, 'Joined MBA College', 'New journey begins.', 'images/patient_4_memory_7.jpg', '2023-07-10'),
--- (4, 'First Trek', 'Climbed Kalsubai peak.', 'images/patient_4_memory_8.jpg', '2023-09-14'),
--- (4, 'Cousin’s Wedding', 'Fun and laughter all day.', 'images/patient_4_memory_9.jpg', '2024-01-10'),
--- (4, 'Got First Internship Offer', 'Excited to start corporate life.', 'images/patient_4_memory_10.jpg', '2024-04-05'),
-
--- Vikram Singh (5)
--- (5, 'Childhood Cricket Match', 'Hit the winning six.', 'images/patient_5_memory_1.jpg', '2005-05-20'),
--- (5, 'School Annual Day', 'Best actor award.', 'images/patient_5_memory_2.jpg', '2010-12-10'),
--- (5, 'First Bike Ride', 'Rode Royal Enfield for first time.', 'images/patient_5_memory_3.jpg', '2013-06-15'),
--- (5, 'Graduation Party', 'Crazy night with friends.', 'images/patient_5_memory_4.jpg', '2016-05-22'),
--- (5, 'Joined TCS', 'First day of professional life.', 'images/patient_5_memory_5.jpg', '2017-07-01'),
--- (5, 'Road Trip to Ladakh', 'Once in a lifetime adventure.', 'images/patient_5_memory_6.jpg', '2018-08-20'),
-(5, 'Sister’s Engagement', 'Family celebration.', 'images/patient_5_memory_7.jpg', '2019-01-05'),
--- (5, 'New House', 'Shifted to Delhi.', 'images/patient_5_memory_8.jpg', '2021-02-15'),
-(5, 'Promotion at Work', 'Hard work paid off.', 'images/patient_5_memory_9.jpg', '2022-06-10'),
--- (5, 'Completed Certification', 'PMP Certified.', 'images/patient_5_memory_10.jpg', '2023-03-30'),
+INSERT INTO Tags (name, patient_id)
+VALUES
+('Family', 1),
+('Grandchildren', 1),
+('Festivals', 1),
+('School Days', 1),
+('Siblings', 1),
+('Spirituality', 1),
+('Health', 1),
+('Friends', 1),
+('Celebration', 1),
+('Tradition', 1),
+('Cooking', 1),
+('Temple', 1);
 
 
--- Ananya Desai (6)
--- (6, 'First Dance Competition', 'Won gold medal at district level.', 'images/patient_6_memory_1.jpg', '2005-09-25'),
--- (6, 'Family Trip to Kerala', 'Houseboat ride memories.', 'images/patient_6_memory_2.jpg', '2008-12-18'),
--- (6, 'School Farewell', 'Bittersweet goodbye.', 'images/patient_6_memory_3.jpg', '2009-03-15'),
--- (6, 'College Best Student Award', 'Awarded best all-rounder.', 'images/patient_6_memory_4.jpg', '2010-05-20'),
--- (6, 'MBA Admission', 'Joined Symbiosis Pune.', 'images/patient_6_memory_5.jpg', '2012-07-05'),
-(6, 'Met Best Friend', 'Met Ria, who became like a sister.', 'images/patient_6_memory_6.jpg', '2012-09-22'),
--- (6, 'Internship at Amazon', 'Learned a lot.', 'images/patient_6_memory_7.jpg', '2013-04-14'),
-(6, 'First International Trip', 'Traveled to Dubai.', 'images/patient_6_memory_8.jpg', '2015-11-11'),
---(6, 'Promotion to Manager', 'Biggest career jump.', 'images/patient_6_memory_9.jpg', '2018-03-19'),
---(6, 'Brother’s Marriage', 'Grand family reunion.', 'images/patient_6_memory_10.jpg', '2020-01-25'),
-
--- Ravi Kumar (7)
-(7, 'Cricket Trophy', 'Led school team to victory.', 'images/patient_7_memory_1.jpg', '2007-01-20'),
--- (7, 'Math Olympiad', 'Won state-level competition.', 'images/patient_7_memory_2.jpg', '2008-12-05'),
--- (7, 'Joined Engineering College', 'New journey started.', 'images/patient_7_memory_3.jpg', '2010-08-01'),
--- (7, 'Trip to Rajasthan', 'Camel ride in Jaisalmer.', 'images/patient_7_memory_4.jpg', '2011-12-30'),
--- (7, 'First Job', 'Selected at campus placement.', 'images/patient_7_memory_5.jpg', '2013-06-15'),
--- (7, 'Parents’ 25th Anniversary', 'Grand celebration.', 'images/patient_7_memory_6.jpg', '2014-02-20'),
--- (7, 'Trip to Maldives', 'Dream vacation.', 'images/patient_7_memory_7.jpg', '2016-04-05'),
--- (7, 'New Pet', 'Adopted a Labrador puppy.', 'images/patient_7_memory_8.jpg', '2017-07-18'),
--- (7, 'Sister’s Graduation', 'Proud brother moment.', 'images/patient_7_memory_9.jpg', '2018-06-20'),
-(7, 'First Home Bought', 'Moved into my apartment.', 'images/patient_7_memory_10.jpg', '2020-09-10'),
-
--- -- Sanya Gupta (8)
--- (8, 'Won Painting Competition', 'State-level champion.', 'images/patient_8_memory_1.jpg', '2010-02-15'),
--- (8, 'School Annual Play', 'Played lead role.', 'images/patient_8_memory_2.jpg', '2012-12-10'),
--- (8, 'Trip to Andaman', 'Snorkeling adventure.', 'images/patient_8_memory_3.jpg', '2014-05-08'),
--- (8, 'Graduated 12th Grade', 'Topper in school.', 'images/patient_8_memory_4.jpg', '2018-03-20'),
--- (8, 'Joined Design College', 'Following passion.', 'images/patient_8_memory_5.jpg', '2018-07-12'),
--- (8, 'Won National Art Contest', 'Featured in magazine.', 'images/patient_8_memory_6.jpg', '2019-10-25'),
--- (8, 'Trip to Europe', 'Visited Italy and Spain.', 'images/patient_8_memory_7.jpg', '2021-08-30'),
--- (8, 'Started Own Art Studio', 'Dream come true.', 'images/patient_8_memory_8.jpg', '2022-05-14'),
--- (8, 'First Art Exhibition', 'Displayed own collection.', 'images/patient_8_memory_9.jpg', '2023-03-05'),
--- (8, 'Won Entrepreneurship Award', 'Recognized for art startup.', 'images/patient_8_memory_10.jpg', '2024-01-25'),
-
--- -- Manoj Verma (9)
--- (9, 'First Bicycle Ride', 'Fell but kept trying.', 'images/patient_9_memory_1.jpg', '1987-11-20'),
--- (9, 'School Topper', 'Stood first in board exams.', 'images/patient_9_memory_2.jpg', '1996-05-15'),
--- (9, 'Admission to IIT', 'Family was so proud.', 'images/patient_9_memory_3.jpg', '1998-07-10'),
--- (9, 'College Cultural Fest', 'Sang at cultural night.', 'images/patient_9_memory_4.jpg', '1999-10-12'),
--- (9, 'First Job at Infosys', 'Dream achieved.', 'images/patient_9_memory_5.jpg', '2002-06-01'),
--- (9, 'Marriage to Anjali', 'Most beautiful day.', 'images/patient_9_memory_6.jpg', '2004-02-14'),
--- (9, 'Daughter’s First Birthday', 'Family gathering.', 'images/patient_9_memory_7.jpg', '2006-09-09'),
--- (9, 'US Onsite Assignment', 'Moved to New York.', 'images/patient_9_memory_8.jpg', '2008-05-20'),
--- (9, 'Bought Dream Home', 'Big milestone.', 'images/patient_9_memory_9.jpg', '2012-11-11'),
--- (9, 'Trip to Grand Canyon', 'Breathtaking views.', 'images/patient_9_memory_10.jpg', '2015-07-19'),
-
--- -- Neha Mehta (10)
--- (10, 'Best Outgoing Student Award', 'School farewell day.', 'images/patient_10_memory_1.jpg', '2010-04-10'),
--- (10, 'Family Trip to Sikkim', 'Snow and waterfalls.', 'images/patient_10_memory_2.jpg', '2011-12-28'),
--- (10, 'Fashion Show Walk', 'Walked for NGO.', 'images/patient_10_memory_3.jpg', '2013-11-22'),
--- (10, 'First Internship', 'Learned corporate culture.', 'images/patient_10_memory_4.jpg', '2014-05-01'),
--- (10, 'Graduation Ceremony', 'Cap and gown moment.', 'images/patient_10_memory_5.jpg', '2015-04-30'),
--- (10, 'Started Fitness Journey', 'Health became priority.', 'images/patient_10_memory_6.jpg', '2016-01-01'),
--- (10, 'Won Dance Contest', 'Performed classical Kathak.', 'images/patient_10_memory_7.jpg', '2018-03-17'),
--- (10, 'First Trek to Valley of Flowers', 'Nature’s paradise.', 'images/patient_10_memory_8.jpg', '2019-08-11'),
--- (10, 'Moved to Mumbai', 'Chasing dreams.', 'images/patient_10_memory_9.jpg', '2021-06-18'),
--- (10, 'Started YouTube Channel', 'Shared passion for art.', 'images/patient_10_memory_10.jpg', '2023-01-20'),
-
--- -- Suresh Bhatt (11)
--- (11, 'Partition Memories', 'Hardships faced during childhood.', 'images/patient_11_memory_1.jpg', '1947-08-15'),
--- (11, 'Village Fair', 'Played games and won a toy.', 'images/patient_11_memory_2.jpg', '1955-02-10'),
--- (11, 'Joined Indian Army', 'Proud moment.', 'images/patient_11_memory_3.jpg', '1965-05-01'),
--- (11, 'Marriage Ceremony', 'Married Savitri Devi.', 'images/patient_11_memory_4.jpg', '1967-03-14'),
--- (11, 'Birth of First Son', 'Felt blessed.', 'images/patient_11_memory_5.jpg', '1969-09-20'),
--- (11, 'Built Ancestral Home', 'Dream fulfilled.', 'images/patient_11_memory_6.jpg', '1975-12-01'),
--- (11, 'Pilgrimage to Varanasi', 'Spiritual enlightenment.', 'images/patient_11_memory_7.jpg', '1980-04-20'),
--- (11, 'Retirement Ceremony', 'Honored for service.', 'images/patient_11_memory_8.jpg', '1995-11-10'),
--- (11, 'Granddaughter’s Birth', 'Family grew.', 'images/patient_11_memory_9.jpg', '2000-05-22'),
--- (11, 'Golden Jubilee', '50 years of marriage celebration.', 'images/patient_11_memory_10.jpg', '2017-03-14'),
-
--- -- Geeta Iyer (12)
--- (12, 'Traditional Dance Performance', 'Bharatanatyam debut.', 'images/patient_12_memory_1.jpg', '1968-06-05'),
--- (12, 'Teaching Career Start', 'First school appointment.', 'images/patient_12_memory_2.jpg', '1975-07-01'),
--- (12, 'Marriage to Mr. Iyer', 'Happy beginnings.', 'images/patient_12_memory_3.jpg', '1976-12-20'),
--- (12, 'Birth of Daughter', 'Blessed with Lakshmi.', 'images/patient_12_memory_4.jpg', '1978-08-15'),
--- (12, 'Family Trip to Mysore', 'Palace and gardens visit.', 'images/patient_12_memory_5.jpg', '1985-12-05'),
--- (12, 'Teacher’s Award', 'Best educator recognition.', 'images/patient_12_memory_6.jpg', '1992-09-05'),
--- (12, 'Daughter’s Wedding', 'Emotional and joyful.', 'images/patient_12_memory_7.jpg', '2000-02-10'),
--- (12, 'Pilgrimage to Rameshwaram', 'Spiritual journey.', 'images/patient_12_memory_8.jpg', '2003-11-14'),
--- (12, 'Grandson’s Birth', 'New joy in life.', 'images/patient_12_memory_9.jpg', '2006-03-09'),
--- (12, 'Retirement Party', 'Celebration of career.', 'images/patient_12_memory_10.jpg', '2012-05-31'),
-
--- -- Rajesh Choudhury (13)
--- (13, 'Childhood River Swims', 'Carefree days.', 'images/patient_13_memory_1.jpg', '1966-07-18'),
--- (13, 'Joined Railways', 'First government job.', 'images/patient_13_memory_2.jpg', '1978-04-01'),
--- (13, 'Marriage Celebration', 'Traditional Bengali wedding.', 'images/patient_13_memory_3.jpg', '1981-01-20'),
--- (13, 'First House Purchase', 'Proud milestone.', 'images/patient_13_memory_4.jpg', '1985-10-10'),
--- (13, 'Children’s Sports Day', 'Cheered from stands.', 'images/patient_13_memory_5.jpg', '1990-12-15'),
--- (13, 'Religious Trip to Puri', 'Visited Jagannath temple.', 'images/patient_13_memory_6.jpg', '1995-06-18'),
--- (13, 'Promotion to Inspector', 'Career growth.', 'images/patient_13_memory_7.jpg', '1998-08-25'),
--- (13, 'Daughter’s Graduation', 'Proud father moment.', 'images/patient_13_memory_8.jpg', '2004-05-10'),
--- (13, 'Retirement Ceremony', 'Felt honored and loved.', 'images/patient_13_memory_9.jpg', '2018-07-01'),
--- (13, 'Golden Wedding Anniversary', 'Celebrated with children and grandchildren.', 'images/patient_13_memory_10.jpg', '2024-02-20'),
-
--- -- Meera Nair (14)
--- (14, 'Learning Carnatic Music', 'First music recital.', 'images/patient_14_memory_1.jpg', '1955-05-01'),
--- (14, 'Marriage Day', 'Wore traditional Kanjeevaram sari.', 'images/patient_14_memory_2.jpg', '1970-11-22'),
--- (14, 'First Temple Visit after Marriage', 'Blessings for new life.', 'images/patient_14_memory_3.jpg', '1970-12-01'),
--- (14, 'Birth of Son', 'Joy of motherhood.', 'images/patient_14_memory_4.jpg', '1973-04-18'),
--- (14, 'Family Trip to Ooty', 'Chilly weather and tea gardens.', 'images/patient_14_memory_5.jpg', '1980-06-10'),
--- (14, 'Started Handloom Business', 'Entrepreneurial step.', 'images/patient_14_memory_6.jpg', '1985-09-01'),
--- (14, 'Granddaughter’s Birth', 'Happiness multiplied.', 'images/patient_14_memory_7.jpg', '2000-01-15'),
--- (14, 'Retirement Celebration', 'Felt accomplished.', 'images/patient_14_memory_8.jpg', '2005-03-05'),
--- (14, 'Pilgrimage to Sabarimala', 'Spiritual bliss.', 'images/patient_14_memory_9.jpg', '2010-12-22'),
--- (14, '80th Birthday', 'Big family celebration.', 'images/patient_14_memory_10.jpg', '2024-09-11');
-
-
-DO $$
-DECLARE
-    mem_id INT;
-    tag_ids INT[];
-    tag_id INT;
-BEGIN
-    FOR mem_id IN SELECT memory_id FROM Memories LOOP
-        -- Pick 2 or 3 random tags
-        SELECT ARRAY(
-            SELECT t.tag_id  -- Using alias "t" for Tags table
-            FROM Tags t
-            ORDER BY RANDOM() 
-            LIMIT FLOOR(RANDOM() * 2 + 2)  -- 2 or 3 tags
-        ) INTO tag_ids;
-        
-        -- Insert into MemoryTags
-        FOREACH tag_id IN ARRAY tag_ids
-        LOOP
-            INSERT INTO MemoryTags (memory_id, tag_id)
-            VALUES (mem_id, tag_id)
-            ON CONFLICT DO NOTHING;
-        END LOOP;
-    END LOOP;
-END $$;
-
-
-DO $$
-DECLARE
-    mem_rec RECORD;
-    p_ids INT[];
-    p_id INT;
-BEGIN
-    -- For each memory, find the patient's related people
-    FOR mem_rec IN
-        SELECT m.memory_id, m.patient_id
-        FROM Memories m
-    LOOP
-        -- Get 1 to 3 random people linked to this patient
-        SELECT ARRAY(
-            SELECT person_id
-            FROM People
-            WHERE patient_id = mem_rec.patient_id
-            ORDER BY RANDOM()
-            LIMIT FLOOR(RANDOM() * 3 + 1)  -- 1 to 3 people
-        ) INTO p_ids;
-        
-        -- Insert each person for the memory
-        FOREACH p_id IN ARRAY p_ids
-        LOOP
-            INSERT INTO MemoryPeople (memory_id, person_id)
-            VALUES (mem_rec.memory_id, p_id)
-            ON CONFLICT DO NOTHING;  -- in case of duplicates
-        END LOOP;
-    END LOOP;
-END $$;
+INSERT INTO MemoryTags (memory_id, tag_id)
+VALUES
+(1, 1), (1, 4),
+(2, 1), (2, 11),
+(3, 1),
+(4, 2),
+(5, 2), (5, 9),
+(6, 5),
+(7, 5),
+(8, 7),
+(9, 8),
+(10, 6),
+(11, 8),
+(12, 8),
+(13, 8),
+(14, 6), (14, 12),
+(15, 1),
+(16, 1), (16, 2),
+(17, 1), (17, 11),
+(18, 5),
+(19, 2), (19, 9),
+(20, 1), (20, 3), (20, 10);

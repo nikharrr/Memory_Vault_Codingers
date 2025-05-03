@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React,{ useState,useEffect } from "react";
 import axios from "axios";
 
 function MemoryDetail() {
-  const [profiles, setProfiles] = useState([]);
-  const [selectedProfiles, setSelectedProfiles] = useState([]);
-  const [newProfile, setNewProfile] = useState({ name: "", relationship: "", photo: null });
-  const [editProfile, setEditProfile] = useState(null); // State for editing a profile
-  const [showModal, setShowModal] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [profiles,setProfiles] = useState([]);
+  const [selectedProfiles,setSelectedProfiles] = useState([]);
+  const [newProfile,setNewProfile] = useState({ name: "",relationship: "",photo: null });
+  const [editProfile,setEditProfile] = useState(null); // State for editing a profile
+  const [showModal,setShowModal] = useState(false);
+  const [isLoading,setIsLoading] = useState(false);
 
   const user = JSON.parse(localStorage.getItem('user'));
   const patientId = user ? user.patient_id : null;
@@ -24,7 +24,7 @@ function MemoryDetail() {
         }));
         setProfiles(profilesWithPhotos);
       } catch (error) {
-        console.error("Error fetching profiles:", error);
+        console.error("Error fetching profiles:",error);
         alert("Failed to load profiles");
       } finally {
         setIsLoading(false);
@@ -32,7 +32,7 @@ function MemoryDetail() {
     };
 
     fetchProfiles();
-  }, [patientId]);
+  },[patientId]);
 
   const handleEditProfile = () => {
     if (selectedProfiles.length !== 1) {
@@ -93,7 +93,7 @@ function MemoryDetail() {
             photo: response.data.image_url,
             favorite: false,
           };
-          setProfiles((prev) => [...prev, newProfileData]);
+          setProfiles((prev) => [...prev,newProfileData]);
           alert("Profile added successfully!");
         }
 
@@ -104,11 +104,11 @@ function MemoryDetail() {
           photo: profile.image_url, // Map image_url to photo
         }));
         setProfiles(profilesWithPhotos);
-        setNewProfile({ name: "", relationship: "", photo: null });
+        setNewProfile({ name: "",relationship: "",photo: null });
         setEditProfile(null); // Reset edit state
         setShowModal(false);
       } catch (error) {
-        console.error("Error saving profile:", error);
+        console.error("Error saving profile:",error);
         alert("Failed to save profile");
       } finally {
         setIsLoading(false);
@@ -130,7 +130,7 @@ function MemoryDetail() {
 
   const handleSelectProfile = (index) => {
     setSelectedProfiles((prev) =>
-      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
+      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev,index]
     );
   };
 
@@ -155,7 +155,7 @@ function MemoryDetail() {
       setSelectedProfiles([]);
       alert("Profiles deleted successfully!");
     } catch (error) {
-      console.error("Error deleting profiles:", error);
+      console.error("Error deleting profiles:",error);
       alert("Failed to delete profiles");
     } finally {
       setIsLoading(false);
@@ -170,21 +170,23 @@ function MemoryDetail() {
         selectedProfiles.map(async (index) => {
           const profileId = profiles[index].person_id;
           const currentStatus = profiles[index].favorite;
-          await axios.patch(`http://localhost:5000/${patientId}/people/toggle-fav/${profileId}`, {
+          await axios.patch(`http://localhost:5000/${patientId}/people/toggle-fav/${profileId}`,{
             favorite: !currentStatus
+          });
+          // Update the profile in the local state instead of refetching
+          setProfiles(prevProfiles => {
+            const updatedProfiles = [...prevProfiles];
+            updatedProfiles[index] = {
+              ...updatedProfiles[index],
+              favorite: !currentStatus
+            };
+            return updatedProfiles;
           });
         })
       );
-      // Refresh the list after update
-      const response = await axios.get(`http://localhost:5000/${patientId}/people`);
-      const profilesWithPhotos = response.data.map((profile) => ({
-        ...profile,
-        photo: profile.image_url, // Map image_url to photo
-      }));
-      setProfiles(profilesWithPhotos);
       setSelectedProfiles([]);
     } catch (error) {
-      console.error("Error updating favorites:", error);
+      console.error("Error updating favorites:",error);
       alert("Failed to update favorites");
     } finally {
       setIsLoading(false);
@@ -193,24 +195,24 @@ function MemoryDetail() {
 
   const handleAddProfile = async (e) => {
     e.preventDefault();
-  
+
     if (!newProfile.name || !newProfile.relationship || !newProfile.photo) {
       alert("Please fill all fields");
       return;
     }
-  
+
     if (newProfile.photo.size > 5 * 1024 * 1024) {
       alert("Image must be smaller than 5MB");
       return;
     }
-  
+
     setIsLoading(true);
-  
+
     const reader = new FileReader();
-  
+
     reader.onloadend = async () => {
       const base64Image = reader.result; // Full base64 string with data:image/jpeg;base64,...
-  
+
       try {
         const response = await axios.post(
           `http://localhost:5000/${patientId}/people/create`,
@@ -220,40 +222,40 @@ function MemoryDetail() {
             image_url: base64Image
           }
         );
-  
+
         const newProfileData = {
           ...response.data,
           photo: response.data.image_url,
           favorite: false
         };
-  
-        setProfiles((prev) => [...prev, newProfileData]);
-        setNewProfile({ name: "", relationship: "", photo: null });
+
+        setProfiles((prev) => [...prev,newProfileData]);
+        setNewProfile({ name: "",relationship: "",photo: null });
         setShowModal(false);
         alert("Profile added successfully!");
       } catch (error) {
-        console.error("Error adding profile:", error);
+        console.error("Error adding profile:",error);
         alert("Failed to add profile");
       } finally {
         setIsLoading(false);
       }
     };
-  
+
     reader.onerror = () => {
       alert("Failed to read image");
       setIsLoading(false);
     };
-  
+
     reader.readAsDataURL(newProfile.photo); // Start reading image after setting up onloadend
   };
-  
-  
+
+
   return (
     <div className="min-h-screen bg-transparent text-white flex flex-col p-4 relative">
       {/* Modal Backdrop - Now with transparent background */}
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div 
+          <div
             className="bg-[#121233] p-6 rounded-lg w-full max-w-md border border-white/20 shadow-xl"
             style={{ backdropFilter: 'blur(8px)' }}
           >
@@ -261,7 +263,7 @@ function MemoryDetail() {
               <h2 className="text-2xl font-bold">
                 {editProfile ? "Edit Profile" : "Add New Profile"}
               </h2>
-              <button 
+              <button
                 onClick={() => {
                   setShowModal(false);
                   setEditProfile(null); // Reset edit state
@@ -273,14 +275,14 @@ function MemoryDetail() {
                 </svg>
               </button>
             </div>
-            
+
             <form onSubmit={handleSaveProfile} className="space-y-4">
               <div>
                 <label className="block mb-1">Name:</label>
                 <input
                   type="text"
                   value={newProfile.name}
-                  onChange={(e) => setNewProfile({ ...newProfile, name: e.target.value })}
+                  onChange={(e) => setNewProfile({ ...newProfile,name: e.target.value })}
                   className="w-full p-2 rounded bg-[#1F1F4D] focus:outline-none"
                   required
                 />
@@ -291,7 +293,7 @@ function MemoryDetail() {
                 <input
                   type="text"
                   value={newProfile.relationship}
-                  onChange={(e) => setNewProfile({ ...newProfile, relationship: e.target.value })}
+                  onChange={(e) => setNewProfile({ ...newProfile,relationship: e.target.value })}
                   className="w-full p-2 rounded bg-[#1F1F4D] focus:outline-none"
                   required
                 />
@@ -302,7 +304,7 @@ function MemoryDetail() {
                 <input
                   type="file"
                   accept="image/*"
-                  onChange={(e) => setNewProfile({ ...newProfile, photo: e.target.files[0] })}
+                  onChange={(e) => setNewProfile({ ...newProfile,photo: e.target.files[0] })}
                   className="w-full"
                 />
               </div>
@@ -333,7 +335,7 @@ function MemoryDetail() {
       <div className="text-4xl font-extrabold mb-4 text-center text-amber-300">People Selected: {selectedProfiles.length}</div>
 
       {/* Profiles List */}
-      <div 
+      <div
         className="w-full max-w-6xl mx-auto max-h-100 overflow-y-auto mb-6 mt-4 bg-transparent p-4 rounded-lg"
         style={{
           scrollbarWidth: 'thin',
@@ -341,19 +343,19 @@ function MemoryDetail() {
         }}
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-          {profiles.map((profile, index) => (
+          {profiles.map((profile,index) => (
             <div
               key={index}
-              className={`flex flex-col items-center cursor-pointer p-2 rounded-lg mr-15 mr-15${
-                selectedProfiles.includes(index) ? "bg-[#1F1F4D]" : ""
-              }`}
+              className={`flex flex-col items-center cursor-pointer p-2 rounded-lg mr-15  transition-all duration-200 ${selectedProfiles.includes(index) ? "bg-blue-900/40 transform scale-105" : ""
+                }`}
               onClick={() => handleSelectProfile(index)}
               tabIndex={0}
             >
               <img
                 src={profile.photo || "https://cdn-icons-png.flaticon.com/512/847/847969.png"} // Fallback user icon
                 alt={profile.name || "User"}
-                className="w-28 h-28 rounded-full object-cover mb-2 border-2 border-white"
+                className={`w-28 h-28 rounded-full object-cover mb-2 border-2 ${selectedProfiles.includes(index) ? "border-blue-400" : "border-white"
+                  }`}
               />
               <div className="text-center">
                 <div className="font-semibold flex items-center justify-center gap-1">

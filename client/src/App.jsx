@@ -8,7 +8,7 @@ import Dashboard from './pages/Dashboard';
 import ViewMemories from './pages/ViewMemories';
 import AddMemory from './pages/AddMemory';
 import MemoryDetail from './pages/MemoryDetail';
-import ForgottenMemories from './pages/ForgottenMemories';
+import EditMemory from './pages/EditMemory';
 import Settings from './pages/Settings';
 import Login from './pages/Login';
 import Profile from './pages/Profile';
@@ -26,22 +26,55 @@ function App() {
     return !!user;
   };
 
+  // Handle initial load and browser navigation
   useEffect(() => {
+    const handleNavigation = (skipAnimation = false) => {
+      const hash = window.location.hash.slice(1) || 'home';
+      const isAuthenticated = checkAuth();
+
+      if (!isAuthenticated && hash !== 'login' && hash !== 'landing') {
+        window.location.hash = '#landing';
+        setCurrentPage('landing');
+        return;
+      }
+
+      if (skipAnimation) {
+        setCurrentPage(hash);
+      } else {
+        setShowStars(true);
+        setTimeout(() => {
+          setCurrentPage(hash);
+          setShowStars(false);
+        },800);
+      }
+    };
+
+    // Handle browser back/forward buttons
+    const handlePopState = () => {
+      handleNavigation(true); // Skip animation for back/forward navigation
+    };
+
     // Check authentication and set initial page
     const user = localStorage.getItem('user');
     if (user) {
       const userData = JSON.parse(user);
       setUserName(userData.full_name);
-      setCurrentPage('home'); // Set to home when logged in
-    } else {
-      setCurrentPage('landing'); // Set to landing when not logged in
     }
 
+    // Set up browser navigation handling
+    window.addEventListener('popstate',handlePopState);
+    handleNavigation(); // Handle initial load
+
+    // Load theme settings
     const savedSettings = localStorage.getItem('memorySettings');
     if (savedSettings) {
       const settings = JSON.parse(savedSettings);
       setIsDarkMode(settings.isDarkMode);
     }
+
+    return () => {
+      window.removeEventListener('popstate',handlePopState);
+    };
   },[]);
 
   useEffect(() => {
@@ -51,15 +84,14 @@ function App() {
   const handlePageChange = (page) => {
     // If user is not authenticated and trying to access protected routes
     if (!checkAuth() && page !== 'login' && page !== 'landing') {
-      setCurrentPage('landing');
+      window.location.hash = '#landing';
       return;
     }
 
     setShowStars(true);
     setTimeout(() => {
-      setCurrentPage(page);
+      window.location.hash = `#${page}`;
       setShowStars(false);
-      window.history.pushState({ page },'',`#${page}`);
     },800);
   };
 
@@ -75,7 +107,7 @@ function App() {
       <Fireflies />
       {checkAuth() && (
         <div className="absolute top-0 left-0 w-full flex justify-between items-center p-4 z-20">
-          <Sidebar onNavigate={handlePageChange} />
+          <Sidebar onNavigate={handlePageChange} isDarkMode={isDarkMode} />
           <Navbar onNavigate={handlePageChange} currentPage={currentPage} userName={userName} />
         </div>
       )}
@@ -85,20 +117,21 @@ function App() {
       <div className="flex flex-col items-center justify-center w-full min-h-screen relative z-10">
         {!checkAuth() ? (
           currentPage === 'login' ? (
-            <Login onNavigate={handlePageChange} />
+            <Login onNavigate={handlePageChange} isDarkMode={isDarkMode} />
           ) : (
-            <LandingPage onNavigate={handlePageChange} />
+            <LandingPage onNavigate={handlePageChange} isDarkMode={isDarkMode} />
           )
         ) : (
           <>
-            {(!currentPage || currentPage === 'home') && <Home />}
-            {currentPage === 'dashboard' && <Dashboard />}
-            {currentPage === 'viewMemories' && <ViewMemories />}
-            {currentPage === 'addMemory' && <AddMemory />}
-            {currentPage === 'memoryDetail' && <MemoryDetail />}
-            {currentPage === 'forgottenMemories' && <ForgottenMemories />}
-            {currentPage === 'settings' && <Settings updateTheme={updateTheme} />}
-            {currentPage === 'profile' && <Profile />}
+            {(!currentPage || currentPage === 'home') && <Home isDarkMode={isDarkMode} />}
+            {currentPage === 'dashboard' && <Dashboard onNavigate={handlePageChange} isDarkMode={isDarkMode} />}
+            {currentPage === 'viewMemories' && <ViewMemories isDarkMode={isDarkMode} />}
+            {currentPage === 'addMemory' && <AddMemory isDarkMode={isDarkMode} />}
+            {currentPage === 'memoryDetail' && <MemoryDetail isDarkMode={isDarkMode} />}
+            {currentPage === 'forgottenMemories' && <ForgottenMemories isDarkMode={isDarkMode} />}
+            {currentPage === 'settings' && <Settings updateTheme={updateTheme} isDarkMode={isDarkMode} />}
+            {currentPage === 'profile' && <Profile isDarkMode={isDarkMode} />}
+            {currentPage === 'editMemory' && <EditMemory isDarkMode={isDarkMode} />}
           </>
         )}
       </div>

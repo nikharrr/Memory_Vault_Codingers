@@ -1,38 +1,39 @@
-import { useState, useEffect, useRef } from 'react';
-import { ChevronDownIcon, MagnifyingGlassIcon, XMarkIcon, CheckIcon } from '@heroicons/react/24/solid';
+import { useState,useEffect,useRef } from 'react';
+import { ChevronDownIcon,MagnifyingGlassIcon,XMarkIcon,CheckIcon } from '@heroicons/react/24/solid';
 
-function Navbar({ onNavigate, currentPage }) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userName, setUserName] = useState('');
-  const [searchCategory, setSearchCategory] = useState('');
-  const [selectedOptions, setSelectedOptions] = useState([]);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isSubDropdownOpen, setIsSubDropdownOpen] = useState(false);
-  const [tagsOptions, setTagsOptions] = useState([]);
-  const [peopleOptions, setPeopleOptions] = useState([]);
-  const [loadingOptions, setLoadingOptions] = useState(false);
-  const [optionsError, setOptionsError] = useState(null);
+function Navbar({ onNavigate,currentPage }) {
+  const [isLoggedIn,setIsLoggedIn] = useState(false);
+  const [userName,setUserName] = useState('');
+  const [searchCategory,setSearchCategory] = useState('');
+  const [selectedOptions,setSelectedOptions] = useState([]);
+  const [isDropdownOpen,setIsDropdownOpen] = useState(false);
+  const [isSubDropdownOpen,setIsSubDropdownOpen] = useState(false);
+  const [tagsOptions,setTagsOptions] = useState([]);
+  const [peopleOptions,setPeopleOptions] = useState([]);
+  const [loadingOptions,setLoadingOptions] = useState(false);
+  const [optionsError,setOptionsError] = useState(null);
   const dropdownRef = useRef(null);
 
   useEffect(() => {
     const searchData = localStorage.getItem('memorySearch');
     if (searchData) {
-      const { category, values } = JSON.parse(searchData);
+      const { category,values } = JSON.parse(searchData);
       setSearchCategory(category);
       setSelectedOptions(values || []);
     }
-  }, []);
+  },[]);
 
   useEffect(() => {
     const user = localStorage.getItem('user');
     if (user) {
       const userData = JSON.parse(user);
       setIsLoggedIn(true);
-      setUserName(userData.full_name);
+      const name = userData.full_name.split(' ');
+      setUserName(name[0]);
     } else {
       setIsLoggedIn(false);
     }
-  }, []);
+  },[]);
   useEffect(() => {
     const fetchOptions = async () => {
       if (!isLoggedIn) return;
@@ -46,7 +47,7 @@ function Navbar({ onNavigate, currentPage }) {
       setOptionsError(null);
 
       try {
-        const [tagsResponse, peopleResponse] = await Promise.all([
+        const [tagsResponse,peopleResponse] = await Promise.all([
           fetch(`http://localhost:5000/${patientId}/tagsName`),
           fetch(`http://localhost:5000/${patientId}/peopleName`)
         ]);
@@ -58,11 +59,11 @@ function Navbar({ onNavigate, currentPage }) {
 
         const tagsData = await tagsResponse.json();
         const peopleData = await peopleResponse.json();
-        console.log(tagsData, peopleData);
+        console.log(tagsData,peopleData);
         setTagsOptions(tagsData);
         setPeopleOptions(peopleData);
       } catch (error) {
-        console.error('Error fetching options:', error);
+        console.error('Error fetching options:',error);
         setOptionsError('Failed to load search options');
         setTagsOptions([]);
         setPeopleOptions([]);
@@ -75,7 +76,7 @@ function Navbar({ onNavigate, currentPage }) {
       fetchOptions();
     }
     fetchOptions();
-  }, [isLoggedIn]);
+  },[isLoggedIn]);
 
 
   useEffect(() => {
@@ -85,11 +86,11 @@ function Navbar({ onNavigate, currentPage }) {
         setIsSubDropdownOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('mousedown',handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('mousedown',handleClickOutside);
     };
-  }, []);
+  },[]);
 
   const handleAuth = () => {
     if (isLoggedIn) {
@@ -118,12 +119,12 @@ function Navbar({ onNavigate, currentPage }) {
     if (selectedOptions.includes(option)) {
       newSelected = selectedOptions.filter(item => item !== option);
     } else {
-      newSelected = [...selectedOptions, option];
+      newSelected = [...selectedOptions,option];
     }
     setSelectedOptions(newSelected);
 
-    const searchParams = { category: searchCategory, values: newSelected };
-    localStorage.setItem('memorySearch', JSON.stringify(searchParams));
+    const searchParams = { category: searchCategory,values: newSelected };
+    localStorage.setItem('memorySearch',JSON.stringify(searchParams));
   };
 
   const handleApplySearch = () => {
@@ -137,7 +138,7 @@ function Navbar({ onNavigate, currentPage }) {
         category: searchCategory,
         values: selectedOptions
       };
-      localStorage.setItem('memorySearch', JSON.stringify(searchParams));
+      localStorage.setItem('memorySearch',JSON.stringify(searchParams));
     }
     window.dispatchEvent(new Event('memorySearchUpdated'));
 
@@ -225,25 +226,27 @@ function Navbar({ onNavigate, currentPage }) {
                   <div className="px-4 py-3 text-red-300 text-center">{optionsError}</div>
                 ) : (
                   <>
-                    {(searchCategory === 'Tags' ? tagsOptions : peopleOptions).map((option, index) => (
-                      <div
-                        key={index}
-                        onClick={() => handleOptionToggle(option)}
-                        className="flex items-center px-4 py-3 text-white hover:bg-white/10 transition cursor-pointer"
-                      >
+                    <div className="max-h-[144px] overflow-y-auto">
+                      {(searchCategory === 'Tags' ? tagsOptions : peopleOptions).map((option,index) => (
                         <div
-                          className={`w-5 h-5 flex items-center justify-center mr-3 rounded ${selectedOptions.includes(option)
-                            ? 'bg-yellow-400'
-                            : 'border border-white'
-                            }`}
+                          key={index}
+                          onClick={() => handleOptionToggle(option)}
+                          className="flex items-center px-4 py-3 text-white hover:bg-white/10 transition cursor-pointer"
                         >
-                          {selectedOptions.includes(option) && (
-                            <CheckIcon className="w-4 h-4 text-black" />
-                          )}
+                          <div
+                            className={`w-5 h-5 flex items-center justify-center mr-3 rounded ${selectedOptions.includes(option)
+                              ? 'bg-yellow-400'
+                              : 'border border-white'
+                              }`}
+                          >
+                            {selectedOptions.includes(option) && (
+                              <CheckIcon className="w-4 h-4 text-black" />
+                            )}
+                          </div>
+                          <span>{option}</span>
                         </div>
-                        <span>{option}</span>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
 
                     {/* Apply Button */}
                     {selectedOptions.length > 0 && (
