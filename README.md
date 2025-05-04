@@ -1,7 +1,7 @@
 # 🧠 Memory Vault
 
 A personalized memory archive for Alzheimer’s patients – designed to help them reconnect with their past, loved ones, and identity.
-[Demo_Video_Link]()
+[Demo_Video_Link](https://drive.google.com/file/d/1A73D5rCaTfI9gMbAmb-fMxrwCTrMHEe7/view?usp=sharing)
 
 ## 📌 Overview
 
@@ -45,7 +45,7 @@ These features are designed to help patients recall memories more easily and off
 - **Cloud Integration**: For storing photos - Cloudinary
 
 
-## 🔁 Application Workflow - [Demo_Video_Link]()
+## 🔁 Application Workflow - [Demo_Video_Link](https://drive.google.com/file/d/1A73D5rCaTfI9gMbAmb-fMxrwCTrMHEe7/view?usp=sharing)
 
 1. **Landing Page**
    - Welcome message
@@ -109,5 +109,5 @@ Create a .env file inside /server:
 
 ## After Setup :
 1. Sign up to Create an Account
-2. use this demo video for better understanding [Demo_Video_Link]()
+2. use this demo video for better understanding [Demo_Video_Link](https://drive.google.com/file/d/1A73D5rCaTfI9gMbAmb-fMxrwCTrMHEe7/view?usp=sharing)
 
