@@ -36,8 +36,9 @@ function Login({ onNavigate }) {
         password: formData.password,
       });
 
-      const user = response.data.user;
+      const { user,token } = response.data;
       localStorage.setItem('user',JSON.stringify(user));
+      localStorage.setItem('token',token);
       onNavigate('home');
     } catch (error) {
       console.error(error);
@@ -76,8 +77,9 @@ function Login({ onNavigate }) {
         birth_date: '2000-01-01', // 👈 placeholder, since no field in form
       });
 
-      const user = response.data.patient;
+      const { patient: user,token } = response.data;
       localStorage.setItem('user',JSON.stringify(user));
+      localStorage.setItem('token',token);
       onNavigate('home');
     } catch (error) {
       console.error(error);
@@ -97,8 +99,8 @@ function Login({ onNavigate }) {
         <div className="flex mb-6">
           <button
             className={`flex-1 py-2 font-semibold border-b-2 ${activeTab === 'login'
-                ? 'border-yellow-300 text-yellow-300'
-                : 'border-transparent text-gray-400'
+              ? 'border-yellow-300 text-yellow-300'
+              : 'border-transparent text-gray-400'
               }`}
             onClick={() => setActiveTab('login')}
           >
@@ -106,8 +108,8 @@ function Login({ onNavigate }) {
           </button>
           <button
             className={`flex-1 py-2 font-semibold border-b-2 ${activeTab === 'signup'
-                ? 'border-yellow-300 text-yellow-300'
-                : 'border-transparent text-gray-400'
+              ? 'border-yellow-300 text-yellow-300'
+              : 'border-transparent text-gray-400'
               }`}
             onClick={() => setActiveTab('signup')}
           >
@@ -149,8 +151,8 @@ function Login({ onNavigate }) {
               type="submit"
               disabled={loading}
               className={`w-full ${loading
-                  ? 'bg-yellow-700'
-                  : 'bg-yellow-600 hover:bg-yellow-700'
+                ? 'bg-yellow-700'
+                : 'bg-yellow-600 hover:bg-yellow-700'
                 } text-white font-bold py-2 px-4 rounded transition-colors`}
             >
               {loading ? 'Logging in...' : 'Login'}
@@ -218,8 +220,8 @@ function Login({ onNavigate }) {
               type="submit"
               disabled={loading}
               className={`w-full ${loading
-                  ? 'bg-yellow-700'
-                  : 'bg-yellow-600 hover:bg-yellow-700'
+                ? 'bg-yellow-700'
+                : 'bg-yellow-600 hover:bg-yellow-700'
                 } text-white font-bold py-2 px-4 rounded transition-colors`}
             >
               {loading ? 'Creating Account...' : 'Sign Up'}
