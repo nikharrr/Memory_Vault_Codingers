@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axios from 'axios'; // ✅ Axios imported
+import api from '../api/axios';
 
 function Login({ onNavigate }) {
   const [activeTab,setActiveTab] = useState('login');
@@ -31,14 +31,13 @@ function Login({ onNavigate }) {
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/patients/login',{
+      const response = await api.post('/patients/login',{
         email: formData.email,
         password: formData.password,
       });
 
-      const { user,token } = response.data;
+      const { user } = response.data;
       localStorage.setItem('user',JSON.stringify(user));
-      localStorage.setItem('token',token);
       onNavigate('home');
     } catch (error) {
       console.error(error);
@@ -70,16 +69,15 @@ function Login({ onNavigate }) {
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/patients/signup',{
+      const response = await api.post('/patients/signup',{
         full_name: formData.name,
         email: formData.email,
         password: formData.password,
         birth_date: '2000-01-01', // 👈 placeholder, since no field in form
       });
 
-      const { patient: user,token } = response.data;
+      const { patient: user } = response.data;
       localStorage.setItem('user',JSON.stringify(user));
-      localStorage.setItem('token',token);
       onNavigate('home');
     } catch (error) {
       console.error(error);

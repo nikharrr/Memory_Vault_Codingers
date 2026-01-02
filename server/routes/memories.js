@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const cloudinary = require('../cloudinary');
 const db = require('../db');
+const verifyToken = require('../middleware/auth');
+
+router.use(verifyToken);
 
 // Get all memories
 router.get('/:patient_id',async (req,res) => {
@@ -17,10 +20,8 @@ router.get('/:patient_id',async (req,res) => {
 router.post('/:patient_id/create',async (req,res) => {
   const { patient_id } = req.params;
   const { title,descrip,memory_date,tags,people_involved } = req.body;
-
-
+  
   const image = req.body.image; // Assuming you're sending the image in the request body
-
 
   console.log(patient_id);
   if (!title || !descrip || !memory_date || !tags || !people_involved || !image) {

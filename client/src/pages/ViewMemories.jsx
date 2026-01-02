@@ -1,4 +1,5 @@
 import { useState,useEffect } from 'react';
+import api from '../api/axios';
 import MemoryCard from '../components/MemoryCard';
 import MemoryPopup from '../components/MemoryPopup';
 
@@ -20,9 +21,7 @@ function ViewMemories() {
     if (!patientId) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/memories/${patientId}/toggle-favorite/${memoryId}`,{
-        method: 'PATCH',
-      });
+      const response = await api.patch(`/memories/${patientId}/toggle-favorite/${memoryId}`);
 
       if (!response.ok) throw new Error('Failed to toggle favorite');
       fetchFavorites(); // Refresh the favorites list
@@ -36,10 +35,9 @@ function ViewMemories() {
     if (!patientId) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/memories/${patientId}/memory/${memory.memory_id}`);
-      if (!response.ok) throw new Error('Failed to fetch memory details');
+      const response = await api.get(`/memories/${patientId}/memory/${memory.memory_id}`);
 
-      const detailedMemory = await response.json();
+      const detailedMemory = response.data;
       setSelectedMemory(detailedMemory);
       setIsPopupOpen(true);
     } catch (err) {
@@ -61,9 +59,8 @@ function ViewMemories() {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/memories/${patientId}/favorites`);
-      if (!response.ok) throw new Error('Failed to fetch favorites');
-      const data = await response.json();
+      const response = await api.get(`/memories/${patientId}/favorites`);
+      const data = response.data;
       setFavorites(data);
     } catch (err) {
       setError(err.message);

@@ -1,5 +1,5 @@
-import { all } from 'axios';
 import React,{ useState,useEffect } from 'react';
+import api from '../api/axios';
 import MemoryPopup from '../components/MemoryPopup';
 import { motion } from 'framer-motion';
 
@@ -67,10 +67,9 @@ function Home() {
 
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:5000/memories/${patientId}`);
-      if (!response.ok) throw new Error('Failed to fetch memories');
+      const response = await api.get(`/memories/${patientId}`);
 
-      const data = await response.json();
+      const data = response.data;
       const memoriesWithParsedDates = data.map(memory => ({
         ...memory,
         date: memory.memory_date ? parseDate(memory.memory_date) : new Date('Invalid Date'),
@@ -94,9 +93,8 @@ function Home() {
     if (!patientId) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/memories/${patientId}/favorites`);
-      if (!response.ok) throw new Error('Failed to fetch favorites');
-      const data = await response.json();
+      const response = await api.get(`/memories/${patientId}/favorites`);
+      const data = response.data;
       setFavorites(new Set(data.map(memory => memory.memory_id)));
     } catch (err) {
       console.error('Error fetching favorites:',err);
@@ -136,13 +134,9 @@ function Home() {
         [params.category.toLowerCase()]: params.values.join(',')
       });
 
-      const response = await fetch(
-        `http://localhost:5000/${patientId}/search?${query}`
-      );
+      const response = await api.get(`/${patientId}/search?${query}`);
 
-      if (!response.ok) throw new Error('Search failed');
-
-      const data = await response.json();
+      const data = response.data;
       // Parse the dates in the search results
       const searchedMemoriesWithParsedDates = data.map(memory => ({
         ...memory,
@@ -240,11 +234,7 @@ function Home() {
     if (!patientId) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/memories/${patientId}/toggle-favorite/${memoryId}`,{
-        method: 'PATCH',
-      });
-
-      if (!response.ok) throw new Error('Failed to toggle favorite');
+      await api.patch(`/memories/${patientId}/toggle-favorite/${memoryId}`);
 
       setFavorites(prev => {
         const newFavorites = new Set(prev);
@@ -269,10 +259,9 @@ function Home() {
 
     try {
       // Fetch detailed memory information
-      const response = await fetch(`http://localhost:5000/memories/${patientId}/memory/${memory.memory_id}`);
-      if (!response.ok) throw new Error('Failed to fetch memory details');
+      const response = await api.get(`/memories/${patientId}/memory/${memory.memory_id}`);
 
-      const detailedMemory = await response.json();
+      const detailedMemory = response.data;
 
       // Add favorite status and set in state
       setSelectedMemory({
@@ -347,7 +336,7 @@ function Home() {
                                 src={memory.image_url || 'https://source.unsplash.com/150x200/?memory'}
                                 alt={`Memory ${memory.id}`}
                                 className="w-full h-full object-cover "
-                                
+
                               />
                             </div>
 

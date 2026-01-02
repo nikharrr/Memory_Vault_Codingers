@@ -1,16 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState,useEffect } from 'react';
+import api from '../api/axios';
 
 function EditMemory() {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [tags, setTags] = useState([]);
-  const [peopleInvolved, setPeopleInvolved] = useState([]);
-  const [existingImageUrls, setExistingImageUrls] = useState([]);
-  const [images, setImages] = useState([]);
-  const [popupMessage, setPopupMessage] = useState('');
-  const [popupType, setPopupType] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [memoryDate, setMemoryDate] = useState('');
+  const [title,setTitle] = useState('');
+  const [description,setDescription] = useState('');
+  const [tags,setTags] = useState([]);
+  const [peopleInvolved,setPeopleInvolved] = useState([]);
+  const [existingImageUrls,setExistingImageUrls] = useState([]);
+  const [images,setImages] = useState([]);
+  const [popupMessage,setPopupMessage] = useState('');
+  const [popupType,setPopupType] = useState('');
+  const [loading,setLoading] = useState(true);
+  const [memoryDate,setMemoryDate] = useState('');
 
   // Get patient_id from localStorage
   const user = JSON.parse(localStorage.getItem('user'));
@@ -30,19 +31,19 @@ function EditMemory() {
     } else {
       window.location.href = '/#home'; // Redirect if no memory to edit
     }
-  }, []);
+  },[]);
 
   const handleFileChange = (event) => {
     const selectedFiles = Array.from(event.target.files);
-    setImages((prevImages) => [...prevImages, ...selectedFiles]);
+    setImages((prevImages) => [...prevImages,...selectedFiles]);
   };
 
   const handleRemoveImage = (index) => {
-    setImages(images.filter((_, i) => i !== index));
+    setImages(images.filter((_,i) => i !== index));
   };
 
   const handleRemoveExistingImage = (index) => {
-    setExistingImageUrls(existingImageUrls.filter((_, i) => i !== index));
+    setExistingImageUrls(existingImageUrls.filter((_,i) => i !== index));
   };
 
   const handleTagsChange = (e) => {
@@ -55,7 +56,7 @@ function EditMemory() {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-    
+
     const storedMemory = JSON.parse(localStorage.getItem('editingMemory'));
     if (!storedMemory) {
       setPopupMessage('Memory data not found');
@@ -69,40 +70,33 @@ function EditMemory() {
       setTimeout(() => {
         setPopupMessage('');
         setPopupType('');
-      }, 3000);
+      },3000);
       return;
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/memories/${patient_id}/edit/${storedMemory.memory_id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          title,
-          descrip: description,
-          memory_date: memoryDate,
-          tags,
-          people_involved: peopleInvolved
-        }),
+      const response = await api.put(`/memories/${patient_id}/edit/${storedMemory.memory_id}`,{
+        title,
+        descrip: description,
+        memory_date: memoryDate,
+        tags,
+        people_involved: peopleInvolved
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to update memory');
-      }
+      // No explicit error throw needed as axios throws on non-2xx
+
 
       setPopupMessage('Memory updated successfully!');
       setPopupType('success');
-      
+
       // Clear the stored memory and redirect after success
       localStorage.removeItem('editingMemory');
       setTimeout(() => {
         window.location.href = '/#home';
-      }, 1500);
-      
+      },1500);
+
     } catch (error) {
-      console.error('Error updating memory:', error);
+      console.error('Error updating memory:',error);
       setPopupMessage('Failed to update memory.');
       setPopupType('error');
     }
@@ -143,7 +137,7 @@ function EditMemory() {
             <div className="mb-6">
               <h3 className="text-gray-300 mb-2">Current Images:</h3>
               <div className="grid grid-cols-2 gap-4">
-                {existingImageUrls.map((imageUrl, index) => (
+                {existingImageUrls.map((imageUrl,index) => (
                   <div key={`existing-${index}`} className="relative">
                     <img
                       src={imageUrl}
@@ -182,7 +176,7 @@ function EditMemory() {
             <div className="mt-4">
               <h3 className="text-gray-300 mb-2">New Images to Add:</h3>
               <div className="grid grid-cols-2 gap-4">
-                {images.map((image, index) => (
+                {images.map((image,index) => (
                   <div key={`new-${index}`} className="relative">
                     <img
                       src={URL.createObjectURL(image)}

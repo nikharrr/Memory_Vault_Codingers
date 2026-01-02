@@ -1,5 +1,5 @@
 import React,{ useState,useEffect } from "react";
-import axios from "axios";
+import api from '../api/axios';
 
 function MemoryDetail() {
   const [profiles,setProfiles] = useState([]);
@@ -17,7 +17,7 @@ function MemoryDetail() {
     const fetchProfiles = async () => {
       try {
         setIsLoading(true);
-        const response = await axios.get(`http://localhost:5000/${patientId}/people`);
+        const response = await axios.get(`http://localhost:5000/${patientId}/people`,{ withCredentials: true });
         const profilesWithPhotos = response.data.map((profile) => ({
           ...profile,
           photo: profile.image_url, // Map image_url to photo
@@ -69,8 +69,8 @@ function MemoryDetail() {
       try {
         if (editProfile) {
           // Update existing profile
-          await axios.put(
-            `http://localhost:5000/${patientId}/people/edit/${editProfile.person_id}`,
+          await api.put(
+            `/${patientId}/people/edit/${editProfile.person_id}`,
             {
               name: newProfile.name,
               relationship: newProfile.relationship,
@@ -80,8 +80,8 @@ function MemoryDetail() {
           alert("Profile updated successfully!");
         } else {
           // Add new profile
-          const response = await axios.post(
-            `http://localhost:5000/${patientId}/people/create`,
+          const response = await api.post(
+            `/${patientId}/people/create`,
             {
               name: newProfile.name,
               relationship: newProfile.relationship,
@@ -98,7 +98,7 @@ function MemoryDetail() {
         }
 
         // Refresh profiles
-        const response = await axios.get(`http://localhost:5000/${patientId}/people`);
+        const response = await api.get(`/${patientId}/people`);
         const profilesWithPhotos = response.data.map((profile) => ({
           ...profile,
           photo: profile.image_url, // Map image_url to photo
@@ -142,11 +142,11 @@ function MemoryDetail() {
         selectedProfiles.map(async (index) => {
           const profileId = profiles[index].person_id;
           console.log(profileId);
-          await axios.delete(`http://localhost:5000/${patientId}/people/delete/${profileId}`);
+          await api.delete(`/${patientId}/people/delete/${profileId}`);
         })
       );
       // Refresh the list after deletion
-      const response = await axios.get(`http://localhost:5000/${patientId}/people`);
+      const response = await api.get(`/${patientId}/people`);
       const profilesWithPhotos = response.data.map((profile) => ({
         ...profile,
         photo: profile.image_url, // Map image_url to photo
@@ -170,7 +170,7 @@ function MemoryDetail() {
         selectedProfiles.map(async (index) => {
           const profileId = profiles[index].person_id;
           const currentStatus = profiles[index].favorite;
-          await axios.patch(`http://localhost:5000/${patientId}/people/toggle-fav/${profileId}`,{
+          await api.patch(`/${patientId}/people/toggle-fav/${profileId}`,{
             favorite: !currentStatus
           });
           // Update the profile in the local state instead of refetching
@@ -214,8 +214,8 @@ function MemoryDetail() {
       const base64Image = reader.result; // Full base64 string with data:image/jpeg;base64,...
 
       try {
-        const response = await axios.post(
-          `http://localhost:5000/${patientId}/people/create`,
+        const response = await api.post(
+          `/${patientId}/people/create`,
           {
             name: newProfile.name,
             relationship: newProfile.relationship,

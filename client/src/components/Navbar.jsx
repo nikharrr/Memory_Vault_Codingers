@@ -1,4 +1,5 @@
 import { useState,useEffect,useRef } from 'react';
+import api from '../api/axios';
 import { ChevronDownIcon,MagnifyingGlassIcon,XMarkIcon,CheckIcon } from '@heroicons/react/24/solid';
 
 function Navbar({ onNavigate,currentPage }) {
@@ -48,17 +49,13 @@ function Navbar({ onNavigate,currentPage }) {
 
       try {
         const [tagsResponse,peopleResponse] = await Promise.all([
-          fetch(`http://localhost:5000/${patientId}/tagsName`),
-          fetch(`http://localhost:5000/${patientId}/peopleName`)
+          api.get(`/${patientId}/tagsName`),
+          api.get(`/${patientId}/peopleName`)
         ]);
 
 
-        if (!tagsResponse.ok || !peopleResponse.ok) {
-          throw new Error('Failed to fetch options');
-        }
-
-        const tagsData = await tagsResponse.json();
-        const peopleData = await peopleResponse.json();
+        const tagsData = tagsResponse.data;
+        const peopleData = peopleResponse.data;
         console.log(tagsData,peopleData);
         setTagsOptions(tagsData);
         setPeopleOptions(peopleData);

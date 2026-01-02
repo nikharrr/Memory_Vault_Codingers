@@ -1,5 +1,5 @@
 import { useState,useEffect } from 'react';
-import axios from 'axios';
+import api from '../api/axios';
 
 function Profile() {
   const [user,setUser] = useState({
@@ -57,7 +57,7 @@ function Profile() {
 
   const fetchMemoryCount = async (patientId) => {
     try {
-      const response = await axios.get(`http://localhost:5000/${patientId}/memory-count`);
+      const response = await api.get(`/${patientId}/memory-count`);
       setUser(prev => ({
         ...prev,
         memoryCount: response.data.total_memories
@@ -91,7 +91,7 @@ function Profile() {
     }
 
     try {
-      const response = await axios.post(`http://localhost:5000/${user.id}/reset-password`,{
+      const response = await api.post(`/${user.id}/reset-password`,{
         oldPassword: passwordData.oldPassword,
         newPassword: passwordData.newPassword
       });
@@ -132,7 +132,7 @@ function Profile() {
     setError('');
 
     try {
-      const response = await axios.put(`http://localhost:5000/${user.id}/edit-profile`,{
+      const response = await api.put(`/${user.id}/edit-profile`,{
         name: formData.name,
         email: formData.email
       });
@@ -164,7 +164,7 @@ function Profile() {
   const handleDeleteAccount = async () => {
     if (window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
       try {
-        await axios.delete(`http://localhost:5000/${user.id}/delete-profile`);
+        await api.delete(`/${user.id}/delete-profile`);
         localStorage.removeItem('user');
         window.location.href = '/';
       } catch (error) {

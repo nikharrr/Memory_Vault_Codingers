@@ -1,4 +1,5 @@
 import { useState,useEffect } from 'react';
+import api from '../api/axios';
 import MemoryCard from '../components/MemoryCard';
 import ViewMemories from './ViewMemories';
 import MemoryPopup from '../components/MemoryPopup';
@@ -16,9 +17,8 @@ function Dashboard({ onNavigate }) {
 
   const fetchTotalMemoryCount = async (patientId) => {
     try {
-      const response = await fetch(`http://localhost:5000/${patientId}/memory-count`);
-      if (!response.ok) throw new Error('Failed to fetch memory count');
-      const data = await response.json();
+      const response = await api.get(`/${patientId}/memory-count`);
+      const data = response.data;
       return data.total_memories;
     } catch (err) {
       console.error('Error fetching memory count:',err);
@@ -42,9 +42,8 @@ function Dashboard({ onNavigate }) {
   const fetchRecentMemories = async (patientId) => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:5000/memories/recent/${patientId}`);
-      if (!response.ok) throw new Error('Failed to fetch recent memories');
-      const data = await response.json();
+      const response = await api.get(`/memories/recent/${patientId}`);
+      const data = response.data;
       setRecentMemories(data);
       // Update only favorites count
       setStats(prev => ({
@@ -76,10 +75,9 @@ function Dashboard({ onNavigate }) {
 
   const handleOpenMemory = async (memory) => {
     try {
-      const response = await fetch(`http://localhost:5000/memories/${memory.patient_id}/memory/${memory.memory_id}`);
-      if (!response.ok) throw new Error('Failed to fetch memory details');
+      const response = await api.get(`/memories/${memory.patient_id}/memory/${memory.memory_id}`);
 
-      const detailedMemory = await response.json();
+      const detailedMemory = response.data;
       setSelectedMemory(detailedMemory);
       setIsPopupOpen(true);
     } catch (err) {
@@ -152,7 +150,7 @@ function Dashboard({ onNavigate }) {
                     src={memory.image_url || 'https://source.unsplash.com/300x400/?memory'}
                     alt={memory.title}
                     className="w-full h-full object-cover "
-                   
+
                   />
                 </div>
                 <div className="text-center">

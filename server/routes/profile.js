@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db'); // <-- using db properly
+const verifyToken = require('../middleware/auth');
+
+router.use(verifyToken);
 
 // routes/profile.js
 router.get('/:patient_id/memory-count',async (req,res) => {

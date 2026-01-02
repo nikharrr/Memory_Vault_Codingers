@@ -4,8 +4,10 @@ const db = require('../db');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
+const verifyToken = require('../middleware/auth');
+
 // Get all patients
-router.get('/',async (req,res) => {
+router.get('/',verifyToken,async (req,res) => {
   try {
     const result = await db.query('SELECT * FROM patients ORDER BY full_name');
     res.json(result.rows);
@@ -42,7 +44,14 @@ router.post('/signup',async (req,res) => {
     const user = newPatient.rows[0];
     const token = jwt.sign({ patient_id: user.patient_id },process.env.JWT_SECRET,{ expiresIn: '1h' });
 
-    res.status(201).json({ message: 'Patient registered successfully',patient: user,token });
+    res.cookie('token',token,{
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 3600000 // 1 hour
+    });
+
+    res.status(201).json({ message: 'Patient registered successfully',patient: user });
   } catch (error) {
     console.error('Signup error:',error);
     res.status(500).json({ message: 'Internal server error' });
@@ -67,8 +76,15 @@ router.post('/login',async (req,res) => {
 
     const token = jwt.sign({ patient_id: user.patient_id },process.env.JWT_SECRET,{ expiresIn: '1h' });
 
-    // Return both user info and token
-    res.header('Authorization',token).json({ user,token });
+    res.cookie('token',token,{
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 3600000 // 1 hour
+    });
+
+    // Return user info only
+    res.json({ user });
 
   } catch (error) {
     console.error('Login error:',error);

@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 
 function verifyToken(req,res,next) {
-    const token = req.header('Authorization')?.split(' ')[1]; // Extract token from "Bearer <token>"
+    const token = req.cookies.token; // Extract token from httpOnly cookie
     if (!token) return res.status(401).send('Access Denied');
 
     try {

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axios from 'axios';
+import api from '../api/axios';
 
 function AddMemory({ isDarkMode }) {
   const [title,setTitle] = useState('');
@@ -86,8 +86,8 @@ function AddMemory({ isDarkMode }) {
 
       try {
         // Send memory to backend
-        const response = await axios.post(
-          `http://localhost:5000/memories/${patient_id}/create`,
+        const response = await api.post(
+          `/memories/${patient_id}/create`,
           newMemory
         );
         console.log(response.data);
@@ -106,10 +106,10 @@ function AddMemory({ isDarkMode }) {
       } catch (error) {
         console.error('Error saving memory:',error);
 
-        // Fallback to localStorage
-        let memories = JSON.parse(localStorage.getItem('memories')) || [];
-        memories.push(newMemory);
-        localStorage.setItem('memories',JSON.stringify(memories));
+        // // Fallback to localStorage
+        // let memories = JSON.parse(localStorage.getItem('memories')) || [];
+        // memories.push(newMemory);
+        // localStorage.setItem('memories',JSON.stringify(memories));
 
         setPopupMessage('Memory saved locally (server unavailable). Image not saved locally.');
         setPopupType('error');
@@ -196,8 +196,8 @@ function AddMemory({ isDarkMode }) {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               className={`w-full p-3 rounded-lg mb-4 focus:ring-2 ${isDarkMode
-                  ? 'bg-transparent border border-yellow-500 text-gray-300 focus:ring-yellow-300'
-                  : 'bg-white border border-gray-300 text-gray-700 focus:ring-blue-300'
+                ? 'bg-transparent border border-yellow-500 text-gray-300 focus:ring-yellow-300'
+                : 'bg-white border border-gray-300 text-gray-700 focus:ring-blue-300'
                 }`}
               required
             />
@@ -210,8 +210,8 @@ function AddMemory({ isDarkMode }) {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className={`w-full p-3 rounded-lg mb-4 focus:ring-2 ${isDarkMode
-                  ? 'bg-transparent border border-yellow-500 text-gray-300 focus:ring-yellow-300'
-                  : 'bg-white border border-gray-300 text-gray-700 focus:ring-blue-300'
+                ? 'bg-transparent border border-yellow-500 text-gray-300 focus:ring-yellow-300'
+                : 'bg-white border border-gray-300 text-gray-700 focus:ring-blue-300'
                 }`}
               rows="4"
               required
@@ -226,8 +226,8 @@ function AddMemory({ isDarkMode }) {
               value={memoryDate}
               onChange={(e) => setMemoryDate(e.target.value)}
               className={`w-full p-3 rounded-lg mb-4 focus:ring-2 ${isDarkMode
-                  ? 'bg-transparent border border-yellow-500 text-gray-300 focus:ring-yellow-300'
-                  : 'bg-white border border-gray-300 text-gray-700 focus:ring-blue-300'
+                ? 'bg-transparent border border-yellow-500 text-gray-300 focus:ring-yellow-300'
+                : 'bg-white border border-gray-300 text-gray-700 focus:ring-blue-300'
                 }`}
               required
             />
@@ -241,8 +241,8 @@ function AddMemory({ isDarkMode }) {
               value={tags.join(', ')}
               onChange={handleTagsChange}
               className={`w-full p-3 rounded-lg mb-4 focus:ring-2 ${isDarkMode
-                  ? 'bg-transparent border border-yellow-500 text-gray-300 focus:ring-yellow-300'
-                  : 'bg-white border border-gray-300 text-gray-700 focus:ring-blue-300'
+                ? 'bg-transparent border border-yellow-500 text-gray-300 focus:ring-yellow-300'
+                : 'bg-white border border-gray-300 text-gray-700 focus:ring-blue-300'
                 }`}
               required
             />
@@ -256,8 +256,8 @@ function AddMemory({ isDarkMode }) {
               value={peopleInvolved.join(', ')}
               onChange={handlePeopleInvolvedChange}
               className={`w-full p-3 rounded-lg mb-4 focus:ring-2 ${isDarkMode
-                  ? 'bg-transparent border border-yellow-500 text-gray-300 focus:ring-yellow-300'
-                  : 'bg-white border border-gray-300 text-gray-700 focus:ring-blue-300'
+                ? 'bg-transparent border border-yellow-500 text-gray-300 focus:ring-yellow-300'
+                : 'bg-white border border-gray-300 text-gray-700 focus:ring-blue-300'
                 }`}
               required
             />
@@ -265,8 +265,8 @@ function AddMemory({ isDarkMode }) {
             <button
               type="submit"
               className={`w-full py-3 rounded-lg font-semibold disabled:opacity-50 ${isDarkMode
-                  ? 'bg-yellow-500 hover:bg-yellow-600 text-white'
-                  : 'bg-blue-500 hover:bg-blue-600 text-white'
+                ? 'bg-yellow-500 hover:bg-yellow-600 text-white'
+                : 'bg-blue-500 hover:bg-blue-600 text-white'
                 }`}
               disabled={isLoading}
             >
