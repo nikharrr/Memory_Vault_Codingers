@@ -9,7 +9,8 @@ router.use(verifyToken);
 // Get all memories
 router.get('/:patient_id',async (req,res) => {
   try {
-    const result = await db.query('SELECT * FROM memories ORDER BY memory_date DESC');
+    const { patient_id } = req.params;
+    const result = await db.query('SELECT * FROM memories WHERE patient_id = $1 ORDER BY memory_date DESC',[patient_id]);
     res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -20,7 +21,7 @@ router.get('/:patient_id',async (req,res) => {
 router.post('/:patient_id/create',async (req,res) => {
   const { patient_id } = req.params;
   const { title,descrip,memory_date,tags,people_involved } = req.body;
-  
+
   const image = req.body.image; // Assuming you're sending the image in the request body
 
   console.log(patient_id);

@@ -38,8 +38,9 @@ CREATE TABLE Memories (
 -- Tags table
 CREATE TABLE Tags (
     tag_id SERIAL PRIMARY KEY,
-    name VARCHAR(50) UNIQUE NOT NULL,
-    patient_id INT REFERENCES Patients(patient_id) ON DELETE CASCADE ON UPDATE CASCADE
+    name VARCHAR(50) NOT NULL,
+    patient_id INT REFERENCES Patients(patient_id) ON DELETE CASCADE ON UPDATE CASCADE,
+    UNIQUE(name, patient_id)
 );
 
 
@@ -56,3 +57,15 @@ CREATE TABLE MemoryPeople (
     person_id INT REFERENCES People(person_id) ON DELETE CASCADE ON UPDATE CASCADE,
     PRIMARY KEY (memory_id, person_id)
 );
+-- PERFORMANCE INDEXES
+-- Optimize filtering memories by patient and sorting by date (Most common query)
+CREATE INDEX idx_memories_patient_date ON memories(patient_id, memory_date DESC);
+CREATE INDEX idx_memories_patient_created ON memories(patient_id, created_at DESC);
+
+-- Optimize searching/validating people and tags by name for a specific patient
+CREATE INDEX idx_people_patient_name ON people(patient_id, name);
+
+-- Optimize Reverse Looups for Many-to-Many relationships
+-- (finding all memories for a specific tag or person)
+CREATE INDEX idx_memorytags_tag_id ON memorytags(tag_id);
+CREATE INDEX idx_memorypeople_person_id ON memorypeople(person_id);
